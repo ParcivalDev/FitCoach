@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">FitCoach</string>
+    <string name="app_logo">App Logo</string>
+    <string name="start_session">Iniciar sesión</string>
+</resources>
