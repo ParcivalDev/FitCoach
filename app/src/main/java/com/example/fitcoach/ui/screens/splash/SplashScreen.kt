@@ -76,7 +76,8 @@ fun SplashScreen(
                     Brush.verticalGradient(
                         colors = listOf(
                             Color(0x80000000), //pasar colores a Color
-                            Color(0x66FF5722)
+                            /*Color(0x66FF5722)*/
+                            Color(0x80000000), //pasar colores a Color
                         ),
                         startY = 1000f,
                     )

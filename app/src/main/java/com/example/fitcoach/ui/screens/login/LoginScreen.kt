@@ -1,8 +1,13 @@
 package com.example.fitcoach.ui.screens.login
 
+import android.content.Intent
 import android.graphics.drawable.Icon
+import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -59,6 +64,9 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Vertices
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -82,13 +90,31 @@ fun LoginScreen(/*navController: NavController*/) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
+    var showContactDialog by remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
 
 
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    //Herramienta que permite controlar el enfoque en la interfaz de usuario
+    //Se utiliza para quitar el foco de los campos de texto al hacer clic en otro lugar
+    val focusManager = LocalFocusManager.current
+    //Herramienta que permite controlar el teclado en la interfaz de usuario
+    val keyboardController = LocalSoftwareKeyboardController.current
 
-
-        //       Spacer(modifier = Modifier.weight(1f))
-
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .clickable(
+                //Rastra la interacción del usuario con el componente
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) {
+                //Elimina el foco de los campos de texto y oculta el teclado al hacer clic
+                //en cualquier lugar de la pantalla
+                focusManager.clearFocus()
+                keyboardController?.hide()
+            }, contentAlignment = Alignment.Center
+    ) {
         Image(
             painter = painterResource(id = R.drawable.fondo_login),
             contentDescription = "Fondo Login",
@@ -104,8 +130,8 @@ fun LoginScreen(/*navController: NavController*/) {
                 .background(
                     Brush.verticalGradient(
                         colors = listOf(
-                            Color.Black.copy(alpha = 0.7f),
-                            Color.Black.copy(alpha = 0.7f)
+                            Color.Black.copy(alpha = 0.6f),
+                            Color.Black.copy(alpha = 0.6f)
                         )
                     )
                 )
@@ -115,11 +141,11 @@ fun LoginScreen(/*navController: NavController*/) {
         // Icono de ayuda
         IconButton(
             onClick = {
-                /*TODO: Implementar acción de ayuda*/
+                showContactDialog = true
             },
             modifier = Modifier
                 .align(Alignment.TopEnd)
-                .padding(16.dp)
+                .padding(24.dp)
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Rounded.HelpOutline,
@@ -133,9 +159,10 @@ fun LoginScreen(/*navController: NavController*/) {
 
         Card(
             modifier = Modifier
-                .fillMaxWidth().align(Alignment.Center)
+                .fillMaxWidth()
+                .align(Alignment.Center)
                 .padding(horizontal = 16.dp),
-            //colors = CardDefaults.cardColors(containerColor = Color.White)
+            colors = CardDefaults.cardColors(containerColor = Color.White)
 
         ) {
             Column(
@@ -284,7 +311,7 @@ fun LoginScreen(/*navController: NavController*/) {
                 Button(
                     onClick = { /* Implementar lógica de login */ },
                     modifier = Modifier
-                        .fillMaxWidth(0.7f)
+                        .fillMaxWidth(0.6f)
                         .height(50.dp)
                         .align(Alignment.CenterHorizontally),
                     colors = ButtonDefaults.buttonColors(containerColor = Orange),
@@ -296,6 +323,49 @@ fun LoginScreen(/*navController: NavController*/) {
                 Spacer(modifier = Modifier.height(24.dp))
             }
         }
+    }
+    /*if (showContactDialog) {
+        ContactDialog(onDismiss = { showContactDialog = false })
+    }*/
+
+
+    if (showContactDialog) {
+        ContactDialog(
+            onDismiss = { showContactDialog = false },
+            onWhatsAppClick = {
+                val phoneNumber = "+34600000000"
+                val message =
+                    "Hola, necesito ayuda con mi cuenta de FitCoach." // Mensaje predeterminado
+
+                val uri = Uri.parse(
+                    "https://api.whatsapp.com/send?phone=$phoneNumber&text=${
+                        Uri.encode(message)
+                    }"
+                )
+                val intent = Intent(Intent.ACTION_VIEW, uri)
+
+                try {
+                    context.startActivity(intent)
+                } catch (e: Exception) {
+                    Toast.makeText(context, "WhatsApp no está instalado", Toast.LENGTH_SHORT).show()
+                }
+            },
+            onEmailClick = {
+                val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
+                    data = Uri.parse("mailto:entrenador@ejemplo.com")
+                    putExtra(Intent.EXTRA_SUBJECT, "Ayuda con mi cuenta de FitCoach")
+                }
+                try {
+                    context.startActivity(emailIntent)
+                } catch (e: Exception) {
+                    Toast.makeText(
+                        context,
+                        "No se pudo abrir la aplicación de correo",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        )
     }
 }
 
