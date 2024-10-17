@@ -32,7 +32,7 @@ fun Navigation(/*checkUserLoggedIn: () -> Boolean*/) {
              )*/
         }
         composable(Screen.Login.route) {
-            LoginScreen(navController)
+            LoginScreen(/*navController*/)
         }
         composable(Screen.Register.route) {
             //RegisterScreen(navController)
