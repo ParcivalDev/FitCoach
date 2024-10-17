@@ -1,17 +1,14 @@
 package com.example.fitcoach.ui.screens.login
 
 import android.content.Intent
-import android.graphics.drawable.Icon
 import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -24,27 +21,17 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.Help
-import androidx.compose.material.icons.automirrored.rounded.HelpCenter
 import androidx.compose.material.icons.automirrored.rounded.HelpOutline
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Password
-import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.rounded.Email
-import androidx.compose.material.icons.rounded.Help
-import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material.icons.rounded.Password
 import androidx.compose.material.icons.rounded.Visibility
 import androidx.compose.material.icons.rounded.VisibilityOff
-import androidx.compose.material.icons.sharp.Visibility
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -62,13 +49,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Vertices
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -76,10 +61,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.example.fitcoach.R
 import com.example.fitcoach.ui.theme.DarkOrange
-import com.example.fitcoach.ui.theme.FitCoachTheme
 import com.example.fitcoach.ui.theme.Gray
 import com.example.fitcoach.ui.theme.LightBlue
 import com.example.fitcoach.ui.theme.Orange
@@ -91,6 +74,7 @@ fun LoginScreen(/*navController: NavController*/) {
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
     var showContactDialog by remember { mutableStateOf(false) }
+    var showPasswordRecoveryDialog by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
 
@@ -292,7 +276,7 @@ fun LoginScreen(/*navController: NavController*/) {
 
                     Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.CenterEnd) {
                         TextButton(
-                            onClick = { /*TODO*/ },
+                            onClick = { showPasswordRecoveryDialog = true },
                             contentPadding = PaddingValues(0.dp),
                             /*colors = ButtonDefaults.textButtonColors(contentColor = Orange)*/
 
@@ -328,7 +312,20 @@ fun LoginScreen(/*navController: NavController*/) {
         ContactDialog(onDismiss = { showContactDialog = false })
     }*/
 
-
+    if (showPasswordRecoveryDialog) {
+        PasswordRecoveryDialog(
+            onDismiss = { showPasswordRecoveryDialog = false },
+            onRecover = { mail ->
+                // LÓGICA PARA ENVIAR EMAIL DE RECUPERACIÓN
+                Toast.makeText(
+                    context,
+                    "Se ha enviado un email de recuperación a $mail",
+                    Toast.LENGTH_LONG
+                ).show()
+                showPasswordRecoveryDialog = false
+            }
+        )
+    }
     if (showContactDialog) {
         ContactDialog(
             onDismiss = { showContactDialog = false },
