@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.fitcoach.ui.screens.home.HomeScreen
 import com.example.fitcoach.ui.screens.login.LoginScreen
 import com.example.fitcoach.ui.screens.splash.SplashScreen
 
@@ -22,20 +23,29 @@ fun Navigation(/*checkUserLoggedIn: () -> Boolean*/) {
                         popUpTo(Screen.SplashScreen.route) { inclusive = true }
                     }
                 })
-                /* onNavigateToHome = {
-                     // Asumiendo que tienes una pantalla Home, si no, ajusta según sea necesario
-                     navController.navigate(Screen.Home.route) {
-                         popUpTo(Screen.SplashScreen.route) { inclusive = true }
-                     }
-                 },
-                 //checkUserLoggedIn = checkUserLoggedIn
-             )*/
+            /* onNavigateToHome = {
+                 // Asumiendo que tienes una pantalla Home, si no, ajusta según sea necesario
+                 navController.navigate(Screen.Home.route) {
+                     popUpTo(Screen.SplashScreen.route) { inclusive = true }
+                 }
+             },
+
+             //checkUserLoggedIn = checkUserLoggedIn
+         )*/
         }
         composable(Screen.Login.route) {
-            LoginScreen(/*navController*/)
+            LoginScreen(
+                onNavigateToHome = {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Login.route) {
+                            inclusive = true
+                        } // Esto es para que no se pueda volver a la pantalla de login
+                    }
+                }
+            )
         }
-        composable(Screen.Register.route) {
-            //RegisterScreen(navController)
+        composable(Screen.Home.route) {
+            HomeScreen()
         }
     }
 }

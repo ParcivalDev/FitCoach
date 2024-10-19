@@ -61,15 +61,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.fitcoach.R
 import com.example.fitcoach.ui.theme.DarkOrange
 import com.example.fitcoach.ui.theme.Gray
 import com.example.fitcoach.ui.theme.LightBlue
 import com.example.fitcoach.ui.theme.Orange
 
-@Preview(showBackground = true)
+
 @Composable
-fun LoginScreen(/*navController: NavController*/) {
+fun LoginScreen(onNavigateToHome: () -> Unit) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
@@ -293,7 +294,7 @@ fun LoginScreen(/*navController: NavController*/) {
 
                 Spacer(modifier = Modifier.height(24.dp))
                 Button(
-                    onClick = { /* Implementar lógica de login */ },
+                    onClick = { onNavigateToHome() },
                     modifier = Modifier
                         .fillMaxWidth(0.6f)
                         .height(50.dp)
