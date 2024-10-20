@@ -26,6 +26,7 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material.icons.rounded.DateRange
 import androidx.compose.material.icons.rounded.Home
+import androidx.compose.material.icons.rounded.Newspaper
 import androidx.compose.material.icons.rounded.Notifications
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Timer
@@ -44,7 +45,7 @@ import com.example.fitcoach.ui.theme.Orange
 
 val BackgroundLight = Color(0xFFF5F5F5)
 val BackgroundDark = Color(0xFF030B1B)
-val DarkBlueLight = Color(0xFF9fabce)
+val DarkBlueLight = Color(0xFF484f69)
 val DarkBlueDark = Color(0xFF1A2234)
 val CardLight = Color(0xFF9fabce)
 val CardDark = Color(0xFF1E2A4A)
@@ -78,8 +79,8 @@ fun HomeScreen() {
         ) {
             Greeting(textColor)
             ExerciseLibrary(textColor)
-            OtherCategories(textColor)
-            LatestNews(cardColor, textColor)
+            OtherCategories()
+            LatestNews(cardColor)
         }
     }
 }
@@ -87,9 +88,9 @@ fun HomeScreen() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopAppBar(isDarkTheme:Boolean) {
+fun TopAppBar(isDarkTheme: Boolean) {
     val backgroundColor = if (isDarkTheme) DarkBlueDark else DarkBlueLight
-    val contentColor = if (isDarkTheme) Color.White else Color.Black
+    val contentColor = Color.White
     TopAppBar(
         title = {
             Box(
@@ -115,7 +116,6 @@ fun TopAppBar(isDarkTheme:Boolean) {
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = backgroundColor,
-            titleContentColor = contentColor,
             navigationIconContentColor = contentColor,
             actionIconContentColor = contentColor
         )
@@ -174,13 +174,13 @@ fun ExerciseItem(muscle: String, textColor: Color) {
             modifier = Modifier
                 .size(70.dp)
                 .clip(CircleShape)  // Esto redondeará la imagen
-                .background(
-                    Color(0x00132A4A),
-                    CircleShape
-                )  // Fondo circular del color de las tarjetas
+            /*.background(
+                Color(0x00132A4A),
+                CircleShape
+            )  // Fondo circular del color de las tarjetas*/
 
-                // .background(Color(0xFFD1C4E9), CircleShape) //0xFFD1C4E9
-                .padding(0.dp),
+            // .background(Color(0xFFD1C4E9), CircleShape) //0xFFD1C4E9
+            //.padding(0.dp),
         )
         Spacer(modifier = Modifier.height(6.dp))
         Text(muscle, style = MaterialTheme.typography.bodyMedium, color = textColor)
@@ -210,7 +210,7 @@ fun getExerciseImageResource(muscle: String): Int {
 
 
 @Composable
-fun OtherCategories(cardColor: Color) {
+fun OtherCategories() {
     val categories = listOf("Entrenamiento", "Academia", "Progreso", "Tienda")
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -249,7 +249,7 @@ fun CategoryItem(category: String, modifier: Modifier = Modifier) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0f))
+                    .background(Color.Black.copy(alpha = 0.1f))
 
             )
 
@@ -272,12 +272,14 @@ fun getCategoryBackgroundImage(category: String): Int {
         "Progreso" -> R.drawable.progreso_img
         "Academia" -> R.drawable.academia_img
         "Tienda" -> R.drawable.tienda_img
+        "Blog" -> R.drawable.blog_img
         else -> R.drawable.ic_image_not_found
     }
 }
 
 @Composable
-fun LatestNews(cardColor: Color, textColor: Color) {
+fun LatestNews(cardColor: Color) {
+    val blog = "Blog"
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -285,17 +287,45 @@ fun LatestNews(cardColor: Color, textColor: Color) {
             .padding(vertical = 16.dp),
         colors = CardDefaults.cardColors(containerColor = cardColor)
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
-        ) {
-            Text(
-                "Últimas noticias",
-                style = MaterialTheme.typography.titleMedium,
-                color = textColor
+        Box(modifier = Modifier.fillMaxSize()) {
+            // Imagen de fondo
+            Image(
+                painter = painterResource(id = getCategoryBackgroundImage(blog)),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
             )
 
+            // Overlay para mejorar la legibilidad del texto
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.4f))
+
+            )
+
+            Row(
+                modifier = Modifier.fillMaxSize(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.Newspaper,
+                    contentDescription = "Icono de blog",
+                    tint = Color.White,
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                        .size(30.dp)
+                )
+                // Texto de la categoría
+                Text(
+                    text = blog,
+                    style = MaterialTheme.typography.titleLarge,
+                    color = Color.White,
+                    modifier = Modifier
+                        .padding(8.dp)
+                )
+            }
         }
     }
 }
@@ -312,23 +342,25 @@ fun Greeting(textColor: Color) {
 @Composable
 fun BottomNavBar(isDarkTheme: Boolean) {
     val backgroundColor = if (isDarkTheme) DarkBlueDark else DarkBlueLight
-    val contentColor = if (isDarkTheme) Color.White else Color.Black
+    val contentColor = Color.White
 
-    NavigationBar(
-        containerColor = backgroundColor
-    ) {
-        val items = listOf(
-            Triple(Icons.Rounded.Timer, "Timer", false),
-            Triple(Icons.Rounded.Home, "Home", true),
-            Triple(Icons.Rounded.DateRange, "Calendar", false)
-        )
+    data class NavItem(val icon: ImageVector, val label: String, val selected: Boolean)
 
-        items.forEach { (icon, label, selected) ->
+    var selectedItemIndex by remember { mutableIntStateOf(1) }
+
+    val items = listOf(
+        NavItem(Icons.Rounded.Timer, "Timer", false),
+        NavItem(Icons.Rounded.Home, "Home", true),
+        NavItem(Icons.Rounded.DateRange, "Calendar", false)
+    )
+
+    NavigationBar(containerColor = backgroundColor) {
+        items.forEachIndexed { index, item ->
             NavigationBarItem(
-                icon = { Icon(icon, contentDescription = label) },
-                label = { Text(label) },
-                selected = selected,
-                onClick = { /* TODO */ },
+                icon = { Icon(item.icon, contentDescription = item.label) },
+                label = { Text(item.label) },
+                selected = index == selectedItemIndex,
+                onClick = { selectedItemIndex = index },
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = AccentOrange,
                     unselectedIconColor = contentColor.copy(alpha = 0.7f),
