@@ -39,7 +39,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.example.fitcoach.R
+import com.example.fitcoach.ui.navigation.Screen
 import com.example.fitcoach.ui.theme.Orange
 
 
@@ -51,15 +54,15 @@ val CardLight = Color(0xFF9fabce)
 val CardDark = Color(0xFF1E2A4A)
 val AccentOrange = Color(0xFFFF6B00)
 
-@Preview(showBackground = true)
+/*@Preview(showBackground = true)
 @Composable
 fun HomeScreenPreview() {
     HomeScreen()
 }
 
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)*/
 @Composable
-fun HomeScreen() {
+fun HomeScreen(navController: NavHostController) {
     val isDarkTheme = isSystemInDarkTheme()
     val backgroundColor = if (isDarkTheme) BackgroundDark else BackgroundLight
     val cardColor = if (isDarkTheme) CardDark else CardLight
@@ -68,7 +71,8 @@ fun HomeScreen() {
 
     Scaffold(
         topBar = { TopAppBar(isDarkTheme) },
-        bottomBar = { BottomNavBar(isDarkTheme) },
+        //bottomBar = { BottomNavBar(isDarkTheme, navController) },
+        bottomBar = { CommonBottomBar(navController, isDarkTheme) },
         containerColor = backgroundColor
     ) { paddingValues ->
         Column(
@@ -340,27 +344,88 @@ fun Greeting(textColor: Color) {
 }
 
 @Composable
-fun BottomNavBar(isDarkTheme: Boolean) {
+fun BottomNavBar(isDarkTheme: Boolean, navController: NavHostController) {
     val backgroundColor = if (isDarkTheme) DarkBlueDark else DarkBlueLight
     val contentColor = Color.White
 
-    data class NavItem(val icon: ImageVector, val label: String, val selected: Boolean)
-
-    var selectedItemIndex by remember { mutableIntStateOf(1) }
+    data class NavItem(val icon: ImageVector, val label: String, val route: String)
 
     val items = listOf(
-        NavItem(Icons.Rounded.Timer, "Timer", false),
-        NavItem(Icons.Rounded.Home, "Home", true),
-        NavItem(Icons.Rounded.DateRange, "Calendar", false)
+        NavItem(Icons.Rounded.Timer, "Timer", Screen.Timer.route),
+        NavItem(Icons.Rounded.Home, "Home", Screen.Home.route),
+        NavItem(
+            Icons.Rounded.DateRange,
+            "Calendar",
+            "calendar"
+        ) // Asume que tienes una ruta para Calendar
     )
 
-    NavigationBar(containerColor = backgroundColor) {
-        items.forEachIndexed { index, item ->
+    /*NavigationBar(containerColor = backgroundColor) {
+        items.forEach { item ->
             NavigationBarItem(
                 icon = { Icon(item.icon, contentDescription = item.label) },
                 label = { Text(item.label) },
-                selected = index == selectedItemIndex,
-                onClick = { selectedItemIndex = index },
+                selected = navController.currentDestination?.route == item.route,
+                onClick = {
+                    navController.navigate(item.route) {
+                        // Pop up to the start destination of the graph to
+                        // avoid building up a large stack of destinations
+                        // on the back stack as users select items
+                        popUpTo(navController.graph.startDestinationId) {
+                            saveState = true
+                        }
+                        // Avoid multiple copies of the same destination when
+                        // reselecting the same item
+                        launchSingleTop = true
+                        // Restore state when reselecting a previously selected item
+                        restoreState = true
+                    }
+                },
+                colors = NavigationBarItemDefaults.colors(
+                    selectedIconColor = AccentOrange,
+                    unselectedIconColor = contentColor.copy(alpha = 0.7f),
+                    selectedTextColor = AccentOrange,
+                    unselectedTextColor = contentColor.copy(alpha = 0.7f),
+                    indicatorColor = contentColor.copy(alpha = 0.1f)
+                )
+            )
+        }
+    }*/
+}
+
+
+@Composable
+fun CommonBottomBar(navController: NavHostController, isDarkTheme: Boolean) {
+    val backgroundColor = if (isDarkTheme) DarkBlueDark else DarkBlueLight
+    val contentColor = Color.White
+
+    data class NavItem(val icon: ImageVector, val label: String, val route: String)
+
+    val items = listOf(
+        NavItem(Icons.Rounded.Timer, "Timer", Screen.Timer.route),
+        NavItem(Icons.Rounded.Home, "Home", Screen.Home.route),
+        NavItem(
+            Icons.Rounded.DateRange,
+            "Calendar",
+            "calendar"
+        ) // Asume que tienes una ruta para Calendar
+    )
+
+    NavigationBar(containerColor = backgroundColor) {
+        items.forEach { item ->
+            NavigationBarItem(
+                icon = { Icon(item.icon, contentDescription = item.label) },
+                label = { Text(item.label) },
+                selected = navController.currentDestination?.route == item.route,
+                onClick = {
+                    navController.navigate(item.route) {
+                        popUpTo(navController.graph.startDestinationId) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                },
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = AccentOrange,
                     unselectedIconColor = contentColor.copy(alpha = 0.7f),

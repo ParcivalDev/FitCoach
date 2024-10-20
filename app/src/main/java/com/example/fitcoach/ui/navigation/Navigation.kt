@@ -5,6 +5,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.fitcoach.ui.screens.home.HomeScreen
+import com.example.fitcoach.ui.screens.home.timer.TimerScreen
 import com.example.fitcoach.ui.screens.login.LoginScreen
 import com.example.fitcoach.ui.screens.splash.SplashScreen
 
@@ -45,7 +46,12 @@ fun Navigation(/*checkUserLoggedIn: () -> Boolean*/) {
             )
         }
         composable(Screen.Home.route) {
-            HomeScreen()
+            HomeScreen(navController = navController)
+        }
+        composable(Screen.Timer.route) {
+            TimerScreen(
+                navController = navController
+            )
         }
     }
 }

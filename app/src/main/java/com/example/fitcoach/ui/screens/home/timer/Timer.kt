@@ -1,10 +1,12 @@
 package com.example.fitcoach.ui.screens.home.timer
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.*
@@ -16,19 +18,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.fitcoach.ui.screens.home.AccentOrange
 import com.example.fitcoach.ui.screens.home.DarkBlueDark
+import com.example.fitcoach.ui.screens.home.CommonBottomBar
 import kotlinx.coroutines.delay
 
-@Preview(showBackground = true)
 @Composable
-fun TimerScreen() {
-    var seconds by remember { mutableIntStateOf(120) }
+fun TimerScreen(navController: NavHostController) {
+    var seconds by remember { mutableStateOf(120) }
     var isActive by remember { mutableStateOf(false) }
-    var minutes by remember { mutableIntStateOf(seconds / 60) }
+    var minutes by remember { mutableStateOf(seconds / 60) }
+    val isDarkTheme = isSystemInDarkTheme()
 
     LaunchedEffect(isActive) {
         while (isActive && seconds > 0) {
@@ -41,85 +44,90 @@ fun TimerScreen() {
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(DarkBlueDark),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Box(
+    Scaffold(
+        bottomBar = { CommonBottomBar(navController, isDarkTheme) }
+    ) { paddingValues ->
+        Column(
             modifier = Modifier
-                .size(250.dp)
-                .clip(CircleShape)
-                .background(Color(0xFF1E2A4A))
-                .padding(8.dp),
-            contentAlignment = Alignment.Center
+                .fillMaxSize()
+                .background(DarkBlueDark)
+                .padding(paddingValues),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            Text(
-                text = formatTime(seconds),
-                color = Color.White,
-                fontSize = 48.sp,
-                fontWeight = FontWeight.Bold
-            )
-        }
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        if (!isActive) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
+            Box(
+                modifier = Modifier
+                    .size(250.dp)
+                    .clip(CircleShape)
+                    .background(Color(0xFF1E2A4A))
+                    .padding(8.dp),
+                contentAlignment = Alignment.Center
             ) {
-                NumberPicker(
-                    value = minutes,
-                    onValueChange = {
-                        minutes = it
-                        seconds = it * 60
-                    },
-                    range = 0..59
-                )
                 Text(
-                    text = "min",
+                    text = formatTime(seconds),
                     color = Color.White,
-                    fontSize = 18.sp,
-                    modifier = Modifier.padding(start = 8.dp)
+                    fontSize = 48.sp,
+                    fontWeight = FontWeight.Bold
                 )
             }
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            if (!isActive) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    NumberPicker(
+                        value = minutes,
+                        onValueChange = {
+                            minutes = it
+                            seconds = it * 60
+                        },
+                        range = 0..59
+                    )
+                    Text(
+                        text = "min",
+                        color = Color.White,
+                        fontSize = 18.sp,
+                        modifier = Modifier.padding(start = 8.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+
+            Button(
+                onClick = { isActive = !isActive },
+                colors = ButtonDefaults.buttonColors(containerColor = AccentOrange),
+                modifier = Modifier
+                    .width(200.dp)
+                    .height(50.dp)
+            ) {
+                Text(
+                    text = if (isActive) "PAUSE" else "START",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
             Spacer(modifier = Modifier.height(16.dp))
-        }
 
-        Button(
-            onClick = { isActive = !isActive },
-            colors = ButtonDefaults.buttonColors(containerColor = AccentOrange),
-            modifier = Modifier
-                .width(200.dp)
-                .height(50.dp)
-        ) {
-            Text(
-                text = if (isActive) "PAUSE" else "START",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Button(
-            onClick = {
-                isActive = false
-                seconds = minutes * 60
-            },
-            colors = ButtonDefaults.buttonColors(containerColor = Color.Gray),
-            modifier = Modifier
-                .width(200.dp)
-                .height(50.dp)
-        ) {
-            Text(
-                text = "RESET",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold
-            )
+            Button(
+                onClick = {
+                    isActive = false
+                    seconds = minutes * 60
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Gray),
+                modifier = Modifier
+                    .width(200.dp)
+                    .height(50.dp)
+            ) {
+                Text(
+                    text = "RESET",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
         }
     }
 }
