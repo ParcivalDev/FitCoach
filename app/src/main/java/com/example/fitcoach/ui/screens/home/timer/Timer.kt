@@ -60,7 +60,7 @@ fun TimerScreen(
             verticalArrangement = Arrangement.Center
         ) {
             TimerDisplay(hours, minutes, seconds, isActive, viewModel::updateHours, viewModel::updateMinutes, viewModel::updateSeconds)
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(100.dp)) // Increased spacing
             TimerControls(isActive, viewModel::toggleTimer, viewModel::resetTimer)
         }
     }
@@ -132,19 +132,19 @@ fun TimerButton(onClick: () -> Unit, content: @Composable () -> Unit) {
 
 @Composable
 fun TimerControls(isActive: Boolean, onToggle: () -> Unit, onReset: () -> Unit) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
         Button(
             onClick = onToggle,
             colors = ButtonDefaults.buttonColors(containerColor = AccentOrange),
-            modifier = Modifier.size(width = 200.dp, height = 50.dp)
+            modifier = Modifier.size(width = 150.dp, height = 50.dp)
         ) {
             Text(if (isActive) "PAUSE" else "START", fontSize = 18.sp, fontWeight = FontWeight.Bold)
         }
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.width(32.dp))
         Button(
             onClick = onReset,
             colors = ButtonDefaults.buttonColors(containerColor = Color.Gray),
-            modifier = Modifier.size(width = 200.dp, height = 50.dp)
+            modifier = Modifier.size(width = 150.dp, height = 50.dp)
         ) {
             Text("RESET", fontSize = 18.sp, fontWeight = FontWeight.Bold)
         }
