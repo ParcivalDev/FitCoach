@@ -1,4 +1,4 @@
-package com.example.fitcoach.ui.screens.home.timer
+package com.example.fitcoach.ui.screens.timer
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

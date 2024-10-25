@@ -15,9 +15,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -28,104 +25,98 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
 import com.example.fitcoach.R
-import com.example.fitcoach.ui.navigation.Screen
 import com.example.fitcoach.ui.theme.Orange
-import androidx.lifecycle.viewmodel.compose.viewModel
-import kotlinx.coroutines.delay
-
 
 @Composable
 fun SplashScreen(
-    onNavigateToLogin: () -> Unit,
-    /*onNavigateToHome: () -> Unit,
-    checkUserLoggedIn: () -> Boolean*/
+    onNavigateToLogin: () -> Unit
 ) {
-    //Esto podría ser después de pulsar al botón de login
-    /*LaunchedEffect(key1 = true) {
-        delay(2000) // Simula una carga inicial
-        *//*if (checkUserLoggedIn()) {
-            onNavigateToHome()
-        } else {*//*
-            onNavigateToLogin()
-        //}
-    }*/
+    Box(modifier = Modifier.fillMaxSize()) {
 
+        BackgroundImage()
 
+        GradientOverlay()
+
+        MainContent(onNavigateToLogin)
+
+    }
+}
+
+@Composable
+private fun BackgroundImage() {
+    Image(
+        painter = painterResource(id = R.drawable.fondo_inicio),
+        contentDescription = null,
+        modifier = Modifier.fillMaxSize(),
+        contentScale = ContentScale.Crop,
+        colorFilter = ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) })
+    )
+}
+
+@Composable
+private fun GradientOverlay() {
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(
+                        Color(0x80000000),
+                        Color(0x80000000)
+                    ),
+                    startY = 1000f
+                )
+            )
+    )
+}
+
+@Composable
+private fun MainContent(onNavigateToLogin: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Spacer(modifier = Modifier.weight(1f))
 
         Image(
-            painter = painterResource(id = R.drawable.fondo_inicio),
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop,
-            colorFilter = ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) })
+            painter = painterResource(id = R.drawable.logo_app),
+            contentDescription = stringResource(R.string.app_logo),
+            modifier = Modifier.size(300.dp)
         )
+        Spacer(modifier = Modifier.weight(1f))
 
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(
-                            Color(0x80000000), //pasar colores a Color
-                            /*Color(0x66FF5722)*/
-                            Color(0x80000000), //pasar colores a Color
-                        ),
-                        startY = 1000f,
-                    )
-                )
+
+        LoginButton(onNavigateToLogin)
+
+
+        Spacer(modifier = Modifier.weight(0.5f))
+    }
+}
+
+@Composable
+private fun LoginButton(onNavigateToLogin: () -> Unit) {
+    Button(
+        onClick = {
+            onNavigateToLogin()
+        },
+        modifier = Modifier
+            .width(250.dp)
+            .height(50.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Orange,
+            contentColor = Color.White
         )
-
-
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Spacer(modifier = Modifier.weight(1f))
-
-            Image(
-                painter = painterResource(id = R.drawable.logo_app),
-                contentDescription = stringResource(R.string.app_logo),
-                modifier = Modifier.size(300.dp)
-            )
-            Spacer(modifier = Modifier.weight(1f))
-
-
-            Button(
-                onClick = {
-                    /*if (checkUserLoggedIn()) {
-                        onNavigateToHome()
-                    } else {*/
-                        onNavigateToLogin()
-                },
-                modifier = Modifier
-                    .width(250.dp)
-                    .height(50.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Orange,
-                    contentColor = Color.White
-                )
-            ) {
-                Text(
-                    text = stringResource(R.string.start_session),
-                    fontWeight = FontWeight.Bold, fontSize = 18.sp
-                )
-            }
-
-
-            Spacer(modifier = Modifier.weight(0.5f))
-
-        }
+    ) {
+        Text(
+            text = stringResource(R.string.start_session),
+            fontWeight = FontWeight.Bold,
+            fontSize = 18.sp
+        )
     }
 }

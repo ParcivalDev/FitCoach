@@ -1,9 +1,8 @@
-package com.example.fitcoach.ui.screens.login
+package com.example.fitcoach.ui.screens.login.dialogs
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,7 +13,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Phone
-import androidx.compose.material.icons.filled.Support
 import androidx.compose.material.icons.filled.SupportAgent
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -27,7 +25,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 
@@ -35,7 +32,7 @@ import androidx.compose.ui.window.Dialog
 fun ContactDialog(
     onDismiss: () -> Unit, onWhatsAppClick: () -> Unit,
     onEmailClick: () -> Unit
-) { //on dismiss?? ----------------------------------------------------------------------
+) {
     Dialog(onDismissRequest = onDismiss) {
         Card(
             modifier = Modifier
@@ -113,11 +110,3 @@ fun ContactDialog(
     }
 }
 
-/*
-@Preview
-@Composable
-fun ContactDialogPreview() {
-    ContactDialog(onDismiss = { */
-/* Preview *//*
- })
-}*/

@@ -1,4 +1,4 @@
-package com.example.fitcoach.ui.screens.home.timer
+package com.example.fitcoach.ui.screens.timer
 
 import android.annotation.SuppressLint
 import android.widget.NumberPicker

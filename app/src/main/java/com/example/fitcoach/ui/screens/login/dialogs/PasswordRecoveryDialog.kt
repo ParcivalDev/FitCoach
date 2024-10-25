@@ -1,4 +1,4 @@
-package com.example.fitcoach.ui.screens.login
+package com.example.fitcoach.ui.screens.login.dialogs
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
