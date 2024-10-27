@@ -3,12 +3,15 @@ package com.example.fitcoach.ui.navigation
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.example.fitcoach.ui.screens.home.HomeScreen
+import com.example.fitcoach.ui.screens.home.HomeViewModel
 import com.example.fitcoach.ui.screens.timer.TimerScreen
 import com.example.fitcoach.ui.screens.login.LoginScreen
 import com.example.fitcoach.ui.screens.login.LoginViewModel
 import com.example.fitcoach.ui.screens.splash.SplashScreen
+import com.example.fitcoach.ui.screens.timer.TimerViewModel
 
 @Composable
 fun Navigation() {
@@ -28,7 +31,7 @@ fun Navigation() {
             )
         }
         composable(Screen.Login.route) {
-            val loginViewModel = LoginViewModel()
+            val loginViewModel: LoginViewModel = viewModel()
             LoginScreen(
                 onNavigateToHome = {
                     navController.navigate(Screen.Home.route) {
@@ -41,11 +44,14 @@ fun Navigation() {
             )
         }
         composable(Screen.Home.route) {
-            HomeScreen(navController = navController)
+            val homeViewModel: HomeViewModel = viewModel()
+            HomeScreen(navController = navController, vm = homeViewModel)
         }
         composable(Screen.Timer.route) {
+            val timerViewModel: TimerViewModel = viewModel()
             TimerScreen(
-                navController = navController
+                navController = navController,
+                vm = timerViewModel
             )
         }
     }

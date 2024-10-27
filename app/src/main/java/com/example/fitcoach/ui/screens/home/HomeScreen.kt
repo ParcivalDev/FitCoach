@@ -32,7 +32,7 @@ import com.example.fitcoach.ui.theme.CardLight
 
 
 @Composable
-fun HomeScreen(navController: NavHostController, vm: HomeViewModel) {
+fun HomeScreen(navController: NavHostController, vm: HomeViewModel = viewModel()) {
     val isDarkTheme = isSystemInDarkTheme()
     val backgroundColor = if (isDarkTheme) BackgroundDark else BackgroundLight
     val cardColor = if (isDarkTheme) CardDark else CardLight

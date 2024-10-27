@@ -21,6 +21,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.fitcoach.ui.screens.login.components.EmailField
 import com.example.fitcoach.ui.screens.login.components.IconHelp
 import com.example.fitcoach.ui.screens.login.components.LoginBackground
@@ -32,14 +33,14 @@ import com.example.fitcoach.utils.DialogUtils
 import com.example.fitcoach.ui.screens.login.dialogs.PasswordRecoveryDialog
 
 
-@Composable
+/*@Composable
 @Preview
 fun PreviewLoginScreen() {
-    LoginScreen(onNavigateToHome = {}, vm = LoginViewModel())
-}
+    LoginScreen(onNavigateToHome = {}, vm = LoginViewModel() )
+}*/
 
 @Composable
-fun LoginScreen(onNavigateToHome: () -> Unit, vm: LoginViewModel) {
+fun LoginScreen(onNavigateToHome: () -> Unit, vm: LoginViewModel = viewModel()) {
 
     val context = LocalContext.current
     //Herramienta que permite controlar el enfoque en la interfaz de usuario

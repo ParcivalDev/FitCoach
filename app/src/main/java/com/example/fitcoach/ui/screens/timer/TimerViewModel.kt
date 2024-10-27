@@ -1,5 +1,8 @@
 package com.example.fitcoach.ui.screens.timer
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
@@ -11,40 +14,40 @@ import kotlinx.coroutines.launch
 class TimerViewModel : ViewModel() {
     private var timerJob: Job? = null
 
-    private val _hours = MutableStateFlow(0)
-    val hours = _hours.asStateFlow()
+    var hours by mutableStateOf(0)
+        private set
 
-    private val _minutes = MutableStateFlow(2)
-    val minutes = _minutes.asStateFlow()
+    var minutes by mutableStateOf(2)
+        private set
 
-    private val _seconds = MutableStateFlow(0)
-    val seconds = _seconds.asStateFlow()
+    var seconds by mutableStateOf(0)
+        private set
 
-    private val _isActive = MutableStateFlow(false)
-    val isActive = _isActive.asStateFlow()
+    var isActive by mutableStateOf(false)
+        private set
 
     private fun updateTime(block: () -> Unit) {
-        if (!_isActive.value) {
+        if (!isActive) {
             block()
         }
     }
 
-    fun updateHours(newHours: Int) = updateTime { _hours.value = newHours }
-    fun updateMinutes(newMinutes: Int) = updateTime { _minutes.value = newMinutes }
-    fun updateSeconds(newSeconds: Int) = updateTime { _seconds.value = newSeconds }
+    fun updateHours(newHours: Int) = updateTime { hours = newHours }
+    fun updateMinutes(newMinutes: Int) = updateTime { minutes = newMinutes }
+    fun updateSeconds(newSeconds: Int) = updateTime { seconds = newSeconds }
 
     fun startTimer() {
-        val totalSeconds = (_hours.value * 3600) + (_minutes.value * 60) + _seconds.value
+        val totalSeconds = (hours * 3600) + (minutes * 60) + seconds
         if (totalSeconds > 0) {
-            _isActive.value = true
+            isActive = true
             timerJob = viewModelScope.launch {
                 var remaining = totalSeconds
-                while (remaining > 0 && _isActive.value) {
+                while (remaining > 0 && isActive) {
                     delay(1000)
                     remaining--
-                    _hours.value = remaining / 3600
-                    _minutes.value = (remaining % 3600) / 60
-                    _seconds.value = remaining % 60
+                    hours = remaining / 3600
+                    minutes = (remaining % 3600) / 60
+                    seconds = remaining % 60
                 }
                 if (remaining == 0) resetTimer()
             }
@@ -52,18 +55,18 @@ class TimerViewModel : ViewModel() {
     }
 
     fun pauseTimer() {
-        _isActive.value = false
+        isActive = false
         timerJob?.cancel()
     }
 
     fun resetTimer() {
         pauseTimer()
-        _hours.value = 0
-        _minutes.value = 2
-        _seconds.value = 0
+        hours = 0
+        minutes = 2
+        seconds = 0
     }
 
     fun toggleTimer() {
-        if (_isActive.value) pauseTimer() else startTimer()
+        if (isActive) pauseTimer() else startTimer()
     }
 }
