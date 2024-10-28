@@ -51,13 +51,6 @@ class LoginViewModel : ViewModel() {
 
     fun onRememberMeChange(checked: Boolean) {
         rememberMe = checked
-        sharedPreferences.edit().putBoolean("remember_me", checked).apply()
-
-        if (!checked) {
-            // Si se desmarca remember me, limpiar las preferencias
-            sharedPreferences.edit().clear().apply()
-        }
-
     }
 
     fun onShowContactDialog() {
@@ -107,21 +100,12 @@ class LoginViewModel : ViewModel() {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    Log.i("Login", "Inicio de sesión exitoso")
-
-                    // Guardar las preferencias si rememberMe está activo
+                    // Guardamos la preferencia de remember me al hacer login
                     if (rememberMe) {
-                        sharedPreferences.edit().apply {
-                            putBoolean("remember_me", true)
-                            putString("user_email", email)
-                            // No guardar la contraseña por seguridad
-                            apply()
-                        }
-                    } else {
-                        // Si no está activo, limpiar las preferencias
-                        sharedPreferences.edit().clear().apply()
+                        sharedPreferences.edit()
+                            .putBoolean("remember_me", true)
+                            .apply()
                     }
-
                     onNavigateToHome()
                 } else {
                     errorMessage = when (task.exception?.message) {
@@ -154,4 +138,9 @@ class LoginViewModel : ViewModel() {
         }
     }
 
+    fun logout() {
+        auth.signOut()
+        // Siempre limpiamos las preferencias al hacer logout
+        sharedPreferences.edit().clear().apply()
+    }
 }
