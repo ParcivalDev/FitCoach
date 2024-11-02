@@ -1,5 +1,11 @@
 package com.example.fitcoach.ui.screens.home
 
+import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
+import android.net.Uri
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -8,11 +14,21 @@ import com.example.fitcoach.R
 import com.example.fitcoach.ui.screens.home.model.BlogPost
 import com.example.fitcoach.ui.screens.home.model.Category
 import com.example.fitcoach.ui.screens.home.model.ExerciseCategory
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 
 class HomeViewModel : ViewModel() {
+    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+    private lateinit var sharedPreferences: SharedPreferences
+
+
+    fun initSharedPreferences(context: Context) {
+        // Abre el mismo archivo "login_prefs" que tiene LoginViewModel
+        sharedPreferences = context.getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
+    }
+
     var userName by mutableStateOf("Usuario")
         private set
 
@@ -90,5 +106,43 @@ class HomeViewModel : ViewModel() {
             "Tienda" -> { /* Navegar a pantalla de tienda */
             }
         }
+    }
+
+    fun onSocialClick(network: String, context: Context) {
+        val url = when (network) {
+            "instagram" -> "https://www.instagram.com/sergiomcoach/?hl=es"
+            "youtube" -> "https://www.youtube.com/@SergioMCoach"
+            "spotify" -> "https://open.spotify.com/playlist/4sYAoF4S6gyrq91h77wbGT?si=Q0XIZI02SfG624He7xGyvw&nd=1&dlsi=c6e891c7bfe84b83"
+            else -> return
+        }
+        try {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+            context.startActivity(intent)
+        } catch (e: Exception) {
+            Toast.makeText(context, "No se pudo abrir el enlace", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    fun onSupportClick(type: String) {
+        when (type) {
+            "help" -> {
+                // TODO: Mostrar pantalla o diálogo de ayuda
+            }
+            "contact" -> {
+                // TODO: Mostrar diálogo de contacto
+            }
+        }
+    }
+
+    fun onLogout(onNavigateToLogin: () -> Unit) {
+        try {
+            sharedPreferences.edit().clear().apply()
+            auth.signOut()
+            onNavigateToLogin()
+        } catch (e: Exception) {
+            Log.e("Logout", "Error durante el logout: ${e.message}")
+            onNavigateToLogin()
+        }
+
     }
 }

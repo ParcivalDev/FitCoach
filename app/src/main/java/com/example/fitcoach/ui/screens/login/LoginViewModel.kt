@@ -138,9 +138,5 @@ class LoginViewModel : ViewModel() {
         }
     }
 
-    fun logout() {
-        auth.signOut()
-        // Siempre limpiamos las preferencias al hacer logout
-        sharedPreferences.edit().clear().apply()
-    }
+
 }

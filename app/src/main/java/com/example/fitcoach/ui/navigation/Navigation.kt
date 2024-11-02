@@ -1,10 +1,14 @@
 package com.example.fitcoach.ui.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
+import com.example.fitcoach.ui.screens.calendar.CalendarScreen
+import com.example.fitcoach.ui.screens.calendar.CalendarViewModel
 import com.example.fitcoach.ui.screens.home.HomeScreen
 import com.example.fitcoach.ui.screens.home.HomeViewModel
 import com.example.fitcoach.ui.screens.timer.TimerScreen
@@ -13,6 +17,7 @@ import com.example.fitcoach.ui.screens.login.LoginViewModel
 import com.example.fitcoach.ui.screens.splash.SplashScreen
 import com.example.fitcoach.ui.screens.timer.TimerViewModel
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Navigation() {
     val navController = rememberNavController()
@@ -52,6 +57,16 @@ fun Navigation() {
             TimerScreen(
                 navController = navController,
                 vm = timerViewModel
+            )
+        }
+        composable(Screen.Calendar.route) {
+            val calendarViewModel: CalendarViewModel = viewModel()
+            CalendarScreen(
+                navController = navController,
+                vm = calendarViewModel,
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
             )
         }
     }

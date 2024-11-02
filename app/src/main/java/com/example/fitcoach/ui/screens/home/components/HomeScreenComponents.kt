@@ -14,31 +14,55 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowForward
+import androidx.compose.material.icons.automirrored.rounded.Help
+import androidx.compose.material.icons.automirrored.rounded.Logout
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.GridView
+import androidx.compose.material.icons.filled.Help
+import androidx.compose.material.icons.filled.Logout
+import androidx.compose.material.icons.filled.MusicNote
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.PlayCircle
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material.icons.rounded.DateRange
+import androidx.compose.material.icons.rounded.Email
+import androidx.compose.material.icons.rounded.Help
 import androidx.compose.material.icons.rounded.Home
+import androidx.compose.material.icons.rounded.Logout
 import androidx.compose.material.icons.rounded.Newspaper
 import androidx.compose.material.icons.rounded.Notifications
+import androidx.compose.material.icons.rounded.Person
+import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Timer
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -57,11 +81,12 @@ import com.example.fitcoach.ui.theme.AccentOrange
 import com.example.fitcoach.ui.theme.CardDark
 import com.example.fitcoach.ui.theme.DarkBlueDark
 import com.example.fitcoach.ui.theme.DarkBlueLight
+import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopAppBarHome(isDarkTheme: Boolean) {
+fun TopAppBarHome(isDarkTheme: Boolean, onProfileClick: () -> Unit) {
     val backgroundColor = if (isDarkTheme) DarkBlueDark else DarkBlueLight
     val contentColor = Color.White
     TopAppBar(
@@ -78,7 +103,7 @@ fun TopAppBarHome(isDarkTheme: Boolean) {
             }
         },
         navigationIcon = {
-            IconButton(onClick = { /* TODO */ }) {
+            IconButton(onClick = onProfileClick) {
                 Icon(Icons.Rounded.AccountCircle, contentDescription = "Perfil")
             }
         },
@@ -226,7 +251,8 @@ fun LatestNews(blogPost: BlogPost, cardColor: Color, onBlogClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .height(100.dp)
-            .padding(vertical = 16.dp).clickable { onBlogClick() },
+            .padding(vertical = 16.dp)
+            .clickable { onBlogClick() },
         colors = CardDefaults.cardColors(containerColor = cardColor)
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
@@ -290,12 +316,12 @@ fun CommonBottomBar(navController: NavHostController, isDarkTheme: Boolean) {
     data class NavItem(val icon: ImageVector, val label: String, val route: String)
 
     val items = listOf(
-        NavItem(Icons.Rounded.Timer, "Timer", Screen.Timer.route),
-        NavItem(Icons.Rounded.Home, "Home", Screen.Home.route),
+        NavItem(Icons.Rounded.Timer, "Temporizador", Screen.Timer.route),
+        NavItem(Icons.Rounded.Home, "Inicio", Screen.Home.route),
         NavItem(
             Icons.Rounded.DateRange,
-            "Calendar",
-            "calendar"
+            "Calendario",
+            Screen.Calendar.route
         )
     )
 
@@ -324,4 +350,180 @@ fun CommonBottomBar(navController: NavHostController, isDarkTheme: Boolean) {
             )
         }
     }
+}
+
+@Composable
+fun DrawerContent(
+    userName: String,
+    backgroundColor: Color,
+    drawerState: DrawerState,
+    onProfileClick: () -> Unit,
+    onSettingsClick: () -> Unit,
+    onSocialClick: (String) -> Unit,
+    onSupportClick: (String) -> Unit,
+    onLogoutClick: () -> Unit
+) {
+    val scope = rememberCoroutineScope()
+
+    fun handleClick(action: () -> Unit) {
+        scope.launch {
+            drawerState.close()
+            action()
+        }
+    }
+    ModalDrawerSheet(
+        modifier = Modifier.width(300.dp),
+        drawerContainerColor = backgroundColor
+    ) {
+        // Header con foto de perfil y nombre
+        DrawerHeader(userName)
+
+        // Sección Usuario
+        DrawerSection(title = "Usuario") {
+            DrawerItem(
+                icon = Icons.Rounded.Person,
+                label = "Mi perfil",
+                onClick = {
+                    handleClick(onProfileClick)
+
+                }
+            )
+            DrawerItem(
+                icon = Icons.Rounded.Settings,
+                label = "Ajustes",
+                onClick = {
+                    handleClick(onSettingsClick)
+                }
+            )
+        }
+
+        // Sección Social
+        DrawerSection(title = "Social") {
+            DrawerItem(
+                icon = R.drawable.instagram_icon,
+                label = "Instagram",
+                onClick = {
+                    handleClick { onSocialClick("instagram") }
+                }
+            )
+            DrawerItem(
+                icon = R.drawable.youtube_icon,
+                label = "YouTube",
+                onClick = {
+                    handleClick { onSocialClick("youtube") }
+                }
+            )
+            DrawerItem(
+                icon = R.drawable.spotify_icon,
+                label = "Spotify",
+                onClick = {
+                    handleClick { onSocialClick("spotify") }
+                }
+            )
+        }
+
+        // Sección Soporte
+        DrawerSection(title = "Soporte") {
+            DrawerItem(
+                icon = Icons.AutoMirrored.Rounded.Help,
+                label = "Ayuda",
+                onClick = {
+                    handleClick { onSupportClick("help") }
+                }
+            )
+            DrawerItem(
+                icon = Icons.Rounded.Email,
+                label = "Contacto",
+                onClick = {
+                    handleClick { onSupportClick("contact") }
+                }
+            )
+        }
+
+        Spacer(modifier = Modifier.weight(1f))
+        HorizontalDivider(Modifier.fillMaxWidth())
+        // Botón de Cerrar Sesión
+        DrawerItem(
+            icon = Icons.AutoMirrored.Rounded.Logout,
+            label = "Cerrar Sesión",
+            onClick = {
+                handleClick(onLogoutClick)
+            }
+        )
+    }
+}
+
+@Composable
+private fun DrawerHeader(userName: String) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(200.dp)
+            .background(MaterialTheme.colorScheme.primary)
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .align(Alignment.BottomStart)
+        ) {
+            Image(
+                imageVector = Icons.Default.AccountCircle,
+                contentDescription = "Foto de perfil",
+                modifier = Modifier
+                    .size(60.dp)
+                    .clip(CircleShape)
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = userName,
+                style = MaterialTheme.typography.titleMedium,
+                color = Color.White
+            )
+        }
+    }
+}
+
+@Composable
+private fun DrawerSection(
+    title: String,
+    content: @Composable () -> Unit
+) {
+    Column {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.padding(start = 28.dp, top = 16.dp, bottom = 8.dp)
+        )
+        content()
+    }
+}
+
+@Composable
+private fun DrawerItem(
+    icon: Any,
+    label: String,
+    onClick: () -> Unit
+) {
+    NavigationDrawerItem(
+        icon = {
+            when (icon) {
+                is ImageVector -> Icon(
+                    imageVector = icon,
+                    contentDescription = label,
+                    modifier = Modifier.size(24.dp)
+                )
+
+                is Int -> Icon(
+                    painter = painterResource(id = icon),
+                    contentDescription = label,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+        },
+        label = { Text(label) },
+        selected = false,
+        onClick = onClick,
+        modifier = Modifier.padding(horizontal = 12.dp)
+    )
 }

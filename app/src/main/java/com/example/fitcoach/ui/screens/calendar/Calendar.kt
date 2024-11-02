@@ -3,6 +3,7 @@ package com.example.fitcoach.ui.screens.calendar
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.*
@@ -18,28 +19,31 @@ import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavHostController
+import com.example.fitcoach.ui.screens.home.components.CommonBottomBar
 import com.example.fitcoach.ui.theme.FitCoachTheme
 import java.time.YearMonth
 
 
-@RequiresApi(Build.VERSION_CODES.O)
+/*@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
 fun CalendarScreenPreview() {
     FitCoachTheme {
         CalendarScreen(
-            viewModel = CalendarViewModel(),
+            vm = CalendarViewModel(),
             onNavigateBack = { }
         )
     }
-}
+}*/
 
 // Función principal que muestra la pantalla del calendario
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CalendarScreen(
-    viewModel: CalendarViewModel,  // ViewModel que maneja la lógica y estado
+    navController: NavHostController,
+    vm: CalendarViewModel,  // ViewModel que maneja la lógica y estado
     onNavigateBack: () -> Unit     // Función para volver atrás
 ) {
     // Scaffold proporciona la estructura básica de la pantalla
@@ -54,6 +58,10 @@ fun CalendarScreen(
                     }
                 }
             )
+        },
+        bottomBar = {
+            // Barra inferior con botones de navegación
+            CommonBottomBar(navController, isSystemInDarkTheme())
         }
     ) { padding ->
         // Contenido principal en una columna
@@ -63,22 +71,22 @@ fun CalendarScreen(
                 .padding(padding)
         ) {
             // Componente para seleccionar el mes
-            MonthSelector(viewModel)
+            MonthSelector(vm)
 
             // Cabecera con los días de la semana
             WeekDaysHeader()
 
             // Grid del calendario con los días
-            CalendarGrid(viewModel)
+            CalendarGrid(vm)
 
             // Área para mostrar y añadir notas
-            NotesArea(viewModel)
+            NotesArea(vm)
         }
     }
 
     // Dialog para añadir notas (solo se muestra cuando showDialog es true)
-    if (viewModel.showDialog) {
-        AddNoteDialog(viewModel)
+    if (vm.showDialog) {
+        AddNoteDialog(vm)
     }
 }
 
@@ -257,7 +265,8 @@ fun AddNoteDialog(viewModel: CalendarViewModel) {
                     value = noteText,
                     onValueChange = { noteText = it },
                     label = { Text("¿Qué tal el entreno?") },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    maxLines = 10
                 )
 
                 // Selector de rating con emojis
