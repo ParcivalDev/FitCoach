@@ -1,7 +1,6 @@
 package com.example.fitcoach.ui.screens.calendar
 
-import android.os.Build
-import androidx.annotation.RequiresApi
+
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -9,7 +8,6 @@ import androidx.lifecycle.ViewModel
 import java.time.LocalDate
 import java.time.YearMonth
 
-@RequiresApi(Build.VERSION_CODES.O)
 class CalendarViewModel : ViewModel() {
     // Estados básicos
     var currentMonth by mutableStateOf(YearMonth.now())
@@ -25,7 +23,6 @@ class CalendarViewModel : ViewModel() {
         private set
 
     // Funciones para actualizar estados
-    @RequiresApi(Build.VERSION_CODES.O)
     fun onMonthChange(isNext: Boolean) {
         currentMonth = if (isNext) {
             currentMonth.plusMonths(1)

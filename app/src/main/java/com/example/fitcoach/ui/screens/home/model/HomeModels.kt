@@ -3,7 +3,7 @@ package com.example.fitcoach.ui.screens.home.model
 // Representa cada ejercicio en la biblioteca
 data class ExerciseCategory(
     val name: String,          // Nombre del músculo/ejercicio
-    val imageResource: Int     // ID del recurso de imagen (R.drawable.xxx)
+    val imageResource: Int     // ID del recurso de imagen
 )
 
 // Representa cada categoría (Entrenamiento, Academia, etc.)

@@ -5,7 +5,6 @@ import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
 import com.example.fitcoach.R
-import com.google.firebase.auth.FirebaseAuth
 
 object DialogUtils {
     // Función que maneja la apertura de whatsapp con un mensaje predeterminado

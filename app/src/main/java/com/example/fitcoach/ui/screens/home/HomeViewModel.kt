@@ -15,8 +15,6 @@ import com.example.fitcoach.ui.screens.home.model.BlogPost
 import com.example.fitcoach.ui.screens.home.model.Category
 import com.example.fitcoach.ui.screens.home.model.ExerciseCategory
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 
 
 class HomeViewModel : ViewModel() {

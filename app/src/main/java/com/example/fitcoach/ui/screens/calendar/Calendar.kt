@@ -1,7 +1,6 @@
 package com.example.fitcoach.ui.screens.calendar
 
-import android.os.Build
-import androidx.annotation.RequiresApi
+
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
@@ -18,10 +17,8 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import com.example.fitcoach.ui.screens.home.components.CommonBottomBar
-import com.example.fitcoach.ui.theme.FitCoachTheme
 import java.time.YearMonth
 
 
@@ -38,7 +35,6 @@ fun CalendarScreenPreview() {
 }*/
 
 // Función principal que muestra la pantalla del calendario
-@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CalendarScreen(
@@ -91,7 +87,6 @@ fun CalendarScreen(
 }
 
 // Componente que muestra el selector de mes con flechas
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MonthSelector(viewModel: CalendarViewModel) {
     Row(
@@ -137,7 +132,6 @@ fun WeekDaysHeader() {
 }
 
 // Grid que muestra los días del mes
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun CalendarGrid(viewModel: CalendarViewModel) {
     val days = getDaysInMonth(viewModel.currentMonth)
@@ -158,7 +152,6 @@ fun CalendarGrid(viewModel: CalendarViewModel) {
 }
 
 // Celda individual para cada día del mes
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DayCell(
     date: LocalDate?,           // Fecha del día (null para días vacíos)
@@ -197,7 +190,6 @@ fun DayCell(
 }
 
 // Área que muestra las notas del día seleccionado
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NotesArea(viewModel: CalendarViewModel) {
     viewModel.selectedDate?.let { date ->
@@ -249,7 +241,6 @@ fun NoteCard(
 }
 
 // Dialog para añadir o editar una nota
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AddNoteDialog(viewModel: CalendarViewModel) {
     var noteText by remember { mutableStateOf("") }
@@ -306,7 +297,6 @@ fun AddNoteDialog(viewModel: CalendarViewModel) {
 }
 
 // Función auxiliar para obtener los días del mes
-@RequiresApi(Build.VERSION_CODES.O)
 private fun getDaysInMonth(yearMonth: YearMonth): List<LocalDate?> {
     val daysInMonth = yearMonth.lengthOfMonth()
     val firstDayOfMonth = yearMonth.atDay(1)

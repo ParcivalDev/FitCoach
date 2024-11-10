@@ -24,20 +24,9 @@ import androidx.compose.material.icons.automirrored.rounded.ArrowForward
 import androidx.compose.material.icons.automirrored.rounded.Help
 import androidx.compose.material.icons.automirrored.rounded.Logout
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.GridView
-import androidx.compose.material.icons.filled.Help
-import androidx.compose.material.icons.filled.Logout
-import androidx.compose.material.icons.filled.MusicNote
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.PlayCircle
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material.icons.rounded.DateRange
-import androidx.compose.material.icons.rounded.Email
-import androidx.compose.material.icons.rounded.Help
 import androidx.compose.material.icons.rounded.Home
-import androidx.compose.material.icons.rounded.Logout
 import androidx.compose.material.icons.rounded.Newspaper
 import androidx.compose.material.icons.rounded.Notifications
 import androidx.compose.material.icons.rounded.Person
@@ -46,7 +35,6 @@ import androidx.compose.material.icons.rounded.Timer
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DrawerState
-import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -60,7 +48,6 @@ import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -264,7 +251,6 @@ fun LatestNews(blogPost: BlogPost, cardColor: Color, onBlogClick: () -> Unit) {
                 modifier = Modifier.fillMaxSize()
             )
 
-            // Overlay para mejorar la legibilidad del texto
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -422,20 +408,13 @@ fun DrawerContent(
             )
         }
 
-        // Sección Soporte
-        DrawerSection(title = "Soporte") {
+        // Sección ayuda
+        DrawerSection(title = "Ayuda") {
             DrawerItem(
                 icon = Icons.AutoMirrored.Rounded.Help,
                 label = "Ayuda",
                 onClick = {
                     handleClick { onSupportClick("help") }
-                }
-            )
-            DrawerItem(
-                icon = Icons.Rounded.Email,
-                label = "Contacto",
-                onClick = {
-                    handleClick { onSupportClick("contact") }
                 }
             )
         }

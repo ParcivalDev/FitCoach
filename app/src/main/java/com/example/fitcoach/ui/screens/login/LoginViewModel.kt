@@ -1,6 +1,6 @@
 package com.example.fitcoach.ui.screens.login
 
-import android.annotation.SuppressLint
+
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.compose.runtime.getValue
