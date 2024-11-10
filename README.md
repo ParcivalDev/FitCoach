@@ -86,11 +86,11 @@ FitCoach es una aplicación móvil Android diseñada para facilitar la gestión 
 - Acceso Blog
 
 ## Capturas
-![Splash](Capturas/Splash.jpg)
-![Login](Capturas/Login_normal.jpg)
-![Home](Capturas/Home.jpg)
-![Calendario](Capturas/Calendario.jpg)
-![Timer](Capturas/Temporizador.jpg)
-![Menu](Capturas/Menu_lateral_oscuro.jpg)
+![Splash](Capturas/Splash.jpeg)
+![Login](Capturas/Login_normal.jpeg)
+![Home](Capturas/Home_Oscuro.jpeg)
+![Calendario](Capturas/Calendario.jpeg)
+![Timer](Capturas/Temporizador.jpeg)
+![Menu](Capturas/Menu_lateral_oscuro.jpeg)
 
 
