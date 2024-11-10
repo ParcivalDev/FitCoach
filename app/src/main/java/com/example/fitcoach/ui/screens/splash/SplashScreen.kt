@@ -1,17 +1,17 @@
 package com.example.fitcoach.ui.screens.splash
 
+import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -33,6 +34,11 @@ import androidx.compose.ui.unit.sp
 import com.example.fitcoach.R
 import com.example.fitcoach.ui.theme.Orange
 
+@Preview
+@Composable
+fun SplashScreenPreview() {
+    SplashScreen {}
+}
 
 
 //Pantalla de inicio que muestra un fondo con una imagen y difuminado para darle más protagonismo al resto de componentes
@@ -86,56 +92,57 @@ private fun GradientOverlay() {
 // Contenido principal de la pantalla
 @Composable
 private fun MainContent(onNavigateToLogin: () -> Unit) {
+    // Detectar la orientación actual
+    val configuration = LocalConfiguration.current
+    val isPortrait = configuration.orientation == Configuration.ORIENTATION_PORTRAIT
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp),
+            .padding(
+                horizontal = if (isPortrait) 24.dp else 80.dp,
+                vertical = if (isPortrait) 24.dp else 32.dp
+            ),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.weight(1f))
 
-        // Logo de la aplicación
+        // Logo adaptable según orientación
         Image(
             painter = painterResource(id = R.drawable.logo_app),
             contentDescription = stringResource(R.string.app_logo),
-            modifier = Modifier.size(300.dp).border(
-                width = 2.dp,  // Grosor del borde
-                color = Orange,  // Color del borde
-                shape = RoundedCornerShape(16.dp)  // Bordes redondeados
-            )
-                // Opcional: añadir padding para que la imagen no toque el borde
-                .padding(8.dp)
+            modifier = Modifier.size(if (isPortrait) 250.dp else 200.dp)
         )
+
         Spacer(modifier = Modifier.weight(1f))
 
         // Botón de inicio de sesión
-        LoginButton(onNavigateToLogin)
+        LoginButton(onNavigateToLogin, isPortrait)
 
 
-        Spacer(modifier = Modifier.weight(0.5f))
+        Spacer(modifier = Modifier.weight(0.2f))
     }
 }
 
 // Función que crea el botón
 @Composable
-private fun LoginButton(onNavigateToLogin: () -> Unit) {
+private fun LoginButton(onNavigateToLogin: () -> Unit, isPortrait: Boolean) {
     Button(
-        onClick = {
-            onNavigateToLogin()
-        },
+        onClick = { onNavigateToLogin() },
         modifier = Modifier
-            .width(250.dp)
-            .height(50.dp),
+            .fillMaxWidth(0.6f)
+            .height(if (isPortrait) 56.dp else 48.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = Orange,
             contentColor = Color.White
-        )
+        ),
+        shape = RoundedCornerShape(28.dp)
     ) {
         Text(
             text = stringResource(R.string.start_session),
             fontWeight = FontWeight.Bold,
-            fontSize = 18.sp
+            fontSize = if (isPortrait) 18.sp else 16.sp
         )
     }
 }

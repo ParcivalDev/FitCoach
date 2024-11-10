@@ -24,16 +24,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.example.fitcoach.R
 
+// Diálogo que muestra la información de contacto del entrenador
 @Composable
 fun ContactDialog(
-    onDismiss: () -> Unit, onWhatsAppClick: () -> Unit,
-    onEmailClick: () -> Unit
+    onDismiss: () -> Unit, // Función que se ejecuta al cerrar el diálogo
+    onWhatsAppClick: () -> Unit, // Función que se ejecuta al hacer clic en el botón de WhatsApp
+    onEmailClick: () -> Unit // Función que se ejecuta al hacer clic en el botón de Email
 ) {
     Dialog(onDismissRequest = onDismiss) {
+        // Tarjeta que contiene la información de contacto
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -46,25 +51,28 @@ fun ContactDialog(
             ) {
                 Icon(
                     imageVector = Icons.Default.SupportAgent,
-                    contentDescription = "Icono de soporte",
+                    contentDescription = stringResource(R.string.icon_ayuda),
                     Modifier.padding(bottom = 8.dp)
                 )
 
 
                 Text(
-                    "¿Problemas para acceder?",
+                    stringResource(R.string.text_contact_dialog),
                     style = MaterialTheme.typography.titleMedium,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()
 
                 )
                 Text(
-                    "Contacta con tu entrenador",
+                    stringResource(R.string.subtext_contact_dialog),
                     style = MaterialTheme.typography.bodySmall,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()
                 )
+
                 Spacer(modifier = Modifier.height(26.dp))
+
+                // Columna que contiene la información de contacto
                 Column(
                     modifier = Modifier.width(IntrinsicSize.Max),
                     horizontalAlignment = Alignment.Start
@@ -73,19 +81,28 @@ fun ContactDialog(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Icon(Icons.Default.Email, contentDescription = "Email de contacto")
-                        Text("entrenador@ejemplo.com")
+                        Icon(
+                            Icons.Default.Email,
+                            contentDescription = stringResource(R.string.email_de_contacto)
+                        )
+                        Text(stringResource(R.string.email_entrenador))
                     }
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         modifier = Modifier.padding(top = 8.dp)
                     ) {
-                        Icon(Icons.Default.Phone, contentDescription = "Teléfono de contacto")
-                        Text(" +34 600 000 000")
+                        Icon(
+                            Icons.Default.Phone,
+                            contentDescription = stringResource(R.string.telf_de_contacto)
+                        )
+                        Text(stringResource(R.string.num_entrenador))
                     }
                 }
+
                 Spacer(modifier = Modifier.height(32.dp))
+
+                // Fila que contiene los botones de WhatsApp y Email
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -95,14 +112,14 @@ fun ContactDialog(
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00bb2d)),
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text("WhatsApp", color = Color.White)
+                        Text(stringResource(R.string.whatsapp), color = Color.White)
                     }
                     Button(
                         onClick = { onEmailClick() },
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1467C7)),
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text("Email", color = Color.White)
+                        Text(stringResource(R.string.email), color = Color.White)
                     }
                 }
             }

@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
 import com.example.fitcoach.R
+import com.google.firebase.auth.FirebaseAuth
 
 object DialogUtils {
     // Función que maneja la apertura de whatsapp con un mensaje predeterminado
@@ -30,9 +31,13 @@ object DialogUtils {
 
     //Función para manejar el envío de correos
     fun handleEmail(context: Context) {
+        val email = context.getString(R.string.email_entrenador)
+        val mensaje = context.getString(R.string.mensaje_ayuda_email)
+
         val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
-            data = Uri.parse(context.getString(R.string.num_entrenador))
-            putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.mensaje_ayuda_email))
+            data = Uri.parse("mailto:")
+            putExtra(Intent.EXTRA_EMAIL, arrayOf(email))
+            putExtra(Intent.EXTRA_SUBJECT, mensaje)
         }
         try { //Intenta abrir la app de correo
             context.startActivity(emailIntent)
@@ -47,16 +52,4 @@ object DialogUtils {
 
     }
 
-    // Función que maneja la recuperación de la contraseña
-    //SIN FUNCIONALIDAD POR AHORA
-    fun handlePasswordRecovery(
-        context: Context, email: String
-    ) {
-        // Muestra un mensaje indicando que se ha enviado un mail de recuperación
-        Toast.makeText(
-            context,
-            context.getString(R.string.email_recuperacion, email),
-            Toast.LENGTH_LONG
-        ).show()
-    }
 }

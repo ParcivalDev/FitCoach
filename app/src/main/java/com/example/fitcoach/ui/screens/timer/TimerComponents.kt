@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.sp
 import com.example.fitcoach.ui.theme.AccentOrange
 
 @Composable
-fun TimerDisplay(
+fun Temporizador(
     hours: Int, minutes: Int, seconds: Int, isActive: Boolean,
     onHoursChange: (Int) -> Unit, onMinutesChange: (Int) -> Unit, onSecondsChange: (Int) -> Unit
 ) {
@@ -49,9 +49,9 @@ fun TimerDisplay(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 TimeSelector(hours, onHoursChange, 23)
-                TimeSeparator()
+                Separador()
                 TimeSelector(minutes, onMinutesChange, 59)
-                TimeSeparator()
+                Separador()
                 TimeSelector(seconds, onSecondsChange, 59)
             }
         } else {
@@ -69,7 +69,7 @@ fun TimerDisplay(
 fun TimeSelector(value: Int, onValueChange: (Int) -> Unit, maxValue: Int) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         TimerButton(onClick = { if (value < maxValue) onValueChange(value + 1) }) {
-            Icon(Icons.Default.KeyboardArrowUp, "Increase", tint = Color.White)
+            Icon(Icons.Default.KeyboardArrowUp, "", tint = Color.White)
         }
         Text(
             text = String.format("%02d", value),
@@ -78,13 +78,13 @@ fun TimeSelector(value: Int, onValueChange: (Int) -> Unit, maxValue: Int) {
             fontWeight = FontWeight.Bold
         )
         TimerButton(onClick = { if (value > 0) onValueChange(value - 1) }) {
-            Icon(Icons.Default.KeyboardArrowDown, "Decrease", tint = Color.White)
+            Icon(Icons.Default.KeyboardArrowDown, "", tint = Color.White)
         }
     }
 }
 
 @Composable
-fun TimeSeparator() {
+fun Separador() {
     Text(":", color = Color.White, fontSize = 40.sp, fontWeight = FontWeight.Bold)
 }
 

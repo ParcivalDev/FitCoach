@@ -31,7 +31,7 @@ fun TimerScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            TimerDisplay(
+            Temporizador(
                 hours = vm.hours,
                 minutes = vm.minutes,
                 seconds = vm.seconds,
