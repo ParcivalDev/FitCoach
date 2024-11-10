@@ -1,5 +1,6 @@
 package com.example.fitcoach.ui.navigation
 
+// Clase que define las rutas de navegación de la aplicación
 sealed class Screen(val route: String) {
     object SplashScreen : Screen("splash")
     object Login : Screen("login")

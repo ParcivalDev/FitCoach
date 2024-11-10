@@ -1,7 +1,6 @@
 package com.example.fitcoach.ui.navigation
 
-import android.os.Build
-import androidx.annotation.RequiresApi
+
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -17,24 +16,30 @@ import com.example.fitcoach.ui.screens.login.LoginViewModel
 import com.example.fitcoach.ui.screens.splash.SplashScreen
 import com.example.fitcoach.ui.screens.timer.TimerViewModel
 
-@RequiresApi(Build.VERSION_CODES.O)
+
 @Composable
 fun Navigation() {
+    // Controlador de la navegación
     val navController = rememberNavController()
+
 
     NavHost(
         navController = navController,
-        startDestination = Screen.SplashScreen.route
+        startDestination = Screen.SplashScreen.route // Primera pantalla en mostrarse
     ) {
+        // Pantalla Splash
         composable(Screen.SplashScreen.route) {
             SplashScreen(
+                //Función que navega a la pantalla de login
                 onNavigateToLogin = {
                     navController.navigate(Screen.Login.route) {
+                        // Elimina la pantalla anterior de la pila para evitar que pueda volver atrás
                         popUpTo(Screen.SplashScreen.route) { inclusive = true }
                     }
                 }
             )
         }
+        // Pantalla Login
         composable(Screen.Login.route) {
             val loginViewModel: LoginViewModel = viewModel()
             LoginScreen(
@@ -42,16 +47,18 @@ fun Navigation() {
                     navController.navigate(Screen.Home.route) {
                         popUpTo(Screen.Login.route) {
                             inclusive = true
-                        } // Esto es para que no se pueda volver a la pantalla de login
+                        }
                     }
                 },
                 vm = loginViewModel
             )
         }
+        // Pantalla Home
         composable(Screen.Home.route) {
             val homeViewModel: HomeViewModel = viewModel()
             HomeScreen(navController = navController, vm = homeViewModel)
         }
+        // Pantalla Timer
         composable(Screen.Timer.route) {
             val timerViewModel: TimerViewModel = viewModel()
             TimerScreen(
@@ -59,11 +66,13 @@ fun Navigation() {
                 vm = timerViewModel
             )
         }
+        // Pantalla Calendar
         composable(Screen.Calendar.route) {
             val calendarViewModel: CalendarViewModel = viewModel()
             CalendarScreen(
                 navController = navController,
                 vm = calendarViewModel,
+                //Función para volver a la pantalla anterior que sería Home
                 onNavigateBack = {
                     navController.popBackStack()
                 }

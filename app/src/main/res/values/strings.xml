@@ -1,5 +1,12 @@
 <resources>
     <string name="app_name">FitCoach</string>
     <string name="app_logo">App Logo</string>
-    <string name="start_session">Iniciar sesión</string>
+    <string name="start_session">Acceder</string>
+    <string name="num_entrenador">+34600000000</string>
+    <string name="email_entrenador">mailto:entrenador@ejemplo.com</string>
+    <string name="mensaje_ayuda_whatsapp">Hola, necesito ayuda con mi cuenta de FitCoach.</string>
+    <string name="sin_whatsapp">WhatsApp no está instalado</string>
+    <string name="mensaje_ayuda_email">Ayuda con mi cuenta de FitCoach</string>
+    <string name="error_abrir_correo">No se pudo abrir la aplicación de correo</string>
+    <string name="email_recuperacion">Se ha enviado un email de recuperación a %1$s</string>
 </resources>
