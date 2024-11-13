@@ -63,7 +63,7 @@ fun Navigation() {
             val timerViewModel: TimerViewModel = viewModel()
             TimerScreen(
                 navController = navController,
-                vm = timerViewModel
+                timerViewModel = timerViewModel
             )
         }
         // Pantalla Calendar

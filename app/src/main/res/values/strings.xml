@@ -35,4 +35,14 @@
     <string name="error_pass_length">La contraseña debe tener al menos 6 caracteres</string>
     <string name="error_recuperacion_password">Error al enviar el email de recuperación: %1$s</string>
     <string name="password_recovery_sent">Se ha enviado un enlace de recuperación</string>
+    <string name="min_y_medio">1\'30\"</string>
+    <string name="dos_min">2\'00\"</string>
+    <string name="tres_min">3\'00\"</string>
+    <string name="icono_de_play_pause">Icono de play/pause</string>
+    <string name="icono_de_detener">Icono de detener</string>
+    <string name="mensaje_not_descanso">¡A darlo todo!</string>
+    <string name="descanso_terminado">⏳¡Descanso terminado!⏳</string>
+    <string name="not_timer_name">Temporizador de entrenamiento</string>
+    <string name="not_timer_descr">Mantente enfocado en tu entrenamiento con alertas para cada descanso y sesión</string>
+    <string name="toast_not_timer">No recibirás notificaciones del temporizador</string>
 </resources>

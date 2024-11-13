@@ -1,6 +1,7 @@
 package com.example.fitcoach.ui.screens.calendar
 
 
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
@@ -17,22 +18,30 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.fitcoach.ui.screens.home.components.CommonBottomBar
+import com.example.fitcoach.ui.theme.FitCoachTheme
 import java.time.YearMonth
 
 
-/*@RequiresApi(Build.VERSION_CODES.O)
-@Preview(showBackground = true)
+
+@Preview(showBackground = true, uiMode = UI_MODE_NIGHT_YES)
 @Composable
 fun CalendarScreenPreview() {
     FitCoachTheme {
         CalendarScreen(
+            navController = rememberNavController(),
             vm = CalendarViewModel(),
             onNavigateBack = { }
         )
     }
-}*/
+}
+
+//
+//CALENDARIO DEBERÍA TENER MARCADO EL DÍA ACTUAL
+//
 
 // Función principal que muestra la pantalla del calendario
 @OptIn(ExperimentalMaterial3Api::class)
@@ -47,7 +56,7 @@ fun CalendarScreen(
         // Barra superior con título y botón de retroceso
         topBar = {
             TopAppBar(
-                title = { Text("Calendario de Entrenamientos") },
+                title = { Text("Calendario") },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, "Volver")
