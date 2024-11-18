@@ -85,7 +85,6 @@ fun HomeScreen(navController: NavHostController, vm: HomeViewModel = viewModel()
                     }
                 )
             },
-
             bottomBar = { CommonBottomBar(navController, isDarkTheme) },
             containerColor = backgroundColor
         ) { paddingValues ->
