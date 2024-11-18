@@ -63,7 +63,7 @@ fun SplashScreen(
 private fun BackgroundImage() {
     Image(
         painter = painterResource(id = R.drawable.fondo_inicio),
-        contentDescription = null,
+        contentDescription = stringResource(R.string.fondo_splash),
         modifier = Modifier.fillMaxSize(),
         contentScale = ContentScale.Crop,
         // Filtro para aplicar a la imagen tonos grises

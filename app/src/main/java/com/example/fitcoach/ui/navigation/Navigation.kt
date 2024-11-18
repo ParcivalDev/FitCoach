@@ -1,7 +1,10 @@
 package com.example.fitcoach.ui.navigation
 
 
+import androidx.activity.ComponentActivity
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -15,13 +18,30 @@ import com.example.fitcoach.ui.screens.login.LoginScreen
 import com.example.fitcoach.ui.screens.login.LoginViewModel
 import com.example.fitcoach.ui.screens.splash.SplashScreen
 import com.example.fitcoach.ui.screens.timer.TimerViewModel
-
+import kotlinx.coroutines.delay
 
 @Composable
 fun Navigation() {
-    // Controlador de la navegación
+    // Controlador de la navegación para manejar las transiciones entre pantallas
     val navController = rememberNavController()
 
+    // Obtener el contexto
+    val context = LocalContext.current
+    val activity = context as? ComponentActivity
+    // Verificar si la pantalla fue abierta desde una notificación
+    val navigateToTimer = activity?.intent?.getBooleanExtra("navigateToTimer", false) ?: false
+
+    // Si viene de la notificación, navegar al timer
+    LaunchedEffect(navigateToTimer) {
+        if (navigateToTimer) {
+            delay(100) // Pequeña espera para asegurar que la navegación está lista
+            navController.navigate(Screen.Timer.route) {
+                popUpTo(Screen.SplashScreen.route) {
+                    inclusive = true
+                }
+            }
+        }
+    }
 
     NavHost(
         navController = navController,
@@ -72,10 +92,6 @@ fun Navigation() {
             CalendarScreen(
                 navController = navController,
                 vm = calendarViewModel,
-                //Función para volver a la pantalla anterior que sería Home
-                onNavigateBack = {
-                    navController.popBackStack()
-                }
             )
         }
     }

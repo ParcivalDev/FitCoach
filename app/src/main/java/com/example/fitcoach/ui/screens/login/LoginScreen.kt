@@ -195,7 +195,7 @@ private fun LoginCard(
                 isPortrait = isPortrait
             )
 
-            // Mensaje de error
+            // Mensaje de error de Firebase
             if (vm.errorMessage.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(

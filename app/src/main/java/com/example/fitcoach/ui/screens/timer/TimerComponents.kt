@@ -42,6 +42,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.fitcoach.R
 import com.example.fitcoach.ui.theme.AccentOrange
+import com.example.fitcoach.ui.theme.BackgroundLight
+import com.example.fitcoach.ui.theme.CardDark
+import com.example.fitcoach.ui.theme.CardLight
+import com.example.fitcoach.ui.theme.DarkBlueDark
 import java.util.Locale
 
 @Preview
@@ -53,15 +57,25 @@ fun TimerScreenPreview() {
 
 @Composable
 fun Temporizador(
-    hours: Int, minutes: Int, seconds: Int, isActive: Boolean,
-    onHoursChange: (Int) -> Unit, onMinutesChange: (Int) -> Unit, onSecondsChange: (Int) -> Unit
+    isDarkTheme: Boolean,
+    hours: Int,
+    minutes: Int,
+    seconds: Int,
+    isActive: Boolean,
+    onHoursChange: (Int) -> Unit,
+    onMinutesChange: (Int) -> Unit,
+    onSecondsChange: (Int) -> Unit
 ) {
+    // Cambiamos los colores según el tema
+    val boxColor = if (isDarkTheme) DarkBlueDark else BackgroundLight
+    val textColor = if (isDarkTheme) Color.White else Color.Black
+
     Box(
         modifier = Modifier
             .fillMaxWidth(0.85f)
             .aspectRatio(1f) // Mantenemos el aspecto circular
             .clip(CircleShape)
-            .background(Color(0xFF1E2A4A))
+            .background(boxColor)
             .padding(24.dp),
         contentAlignment = Alignment.Center
     ) {
@@ -72,11 +86,17 @@ fun Temporizador(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                TimeSelector(hours, onHoursChange, 23) // Selector de horas (0-23)
-                Separador() // Separador :
-                TimeSelector(minutes, onMinutesChange, 59)
-                Separador()
-                TimeSelector(seconds, onSecondsChange, 59)
+                TimeSelector(
+                    hours,
+                    onHoursChange,
+                    23,
+                    isDarkTheme,
+                    textColor
+                ) // Selector de horas (0-23)
+                Separador(textColor) // Separador :
+                TimeSelector(minutes, onMinutesChange, 59, isDarkTheme, textColor)
+                Separador(textColor)
+                TimeSelector(seconds, onSecondsChange, 59, isDarkTheme, textColor)
             }
         } else { // Si el temporizador está activo, se muestra el tiempo restante
             Text(
@@ -87,7 +107,7 @@ fun Temporizador(
                     minutes,
                     seconds
                 ),
-                color = Color.White,
+                color = textColor,
                 fontSize = 64.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -96,7 +116,13 @@ fun Temporizador(
 }
 
 @Composable
-fun TimeSelector(value: Int, onValueChange: (Int) -> Unit, maxValue: Int) {
+fun TimeSelector(
+    value: Int,
+    onValueChange: (Int) -> Unit,
+    maxValue: Int,
+    isDarkTheme: Boolean,
+    textColor: Color
+) {
     // Configuramos el estado inicial de la lista
     // value: es el número que queremos mostrar (ejemplo: 5)
     // maxValue: es el número máximo permitido (ejemplo: para horas sería 23)
@@ -116,6 +142,7 @@ fun TimeSelector(value: Int, onValueChange: (Int) -> Unit, maxValue: Int) {
             .width(80.dp),
         contentAlignment = Alignment.Center
     ) {
+        val resaltado = if (isDarkTheme) Color(0xFF2A3A5A) else Color.LightGray
 
         // Resaltado del número seleccionado
         Box(
@@ -123,7 +150,7 @@ fun TimeSelector(value: Int, onValueChange: (Int) -> Unit, maxValue: Int) {
                 .align(Alignment.Center)
                 .fillMaxWidth()
                 .height(50.dp)
-                .background(Color(0xFF2A3A5A), RoundedCornerShape(12.dp))
+                .background(resaltado, RoundedCornerShape(12.dp))
 
         )
         //Convierte la posición actual a un número de nuesro rango ya que la lista es infinita
@@ -157,7 +184,7 @@ fun TimeSelector(value: Int, onValueChange: (Int) -> Unit, maxValue: Int) {
                     Text(
                         text = String.format(Locale.getDefault(), "%02d", numero),
                         // Si está en el centro es blanco, si no: blanco con transparencia
-                        color = if (estaSeleccionado) Color.White else Color.White.copy(alpha = 0.3f),
+                        color = if (estaSeleccionado) textColor else textColor.copy(alpha = 0.3f),
                         // Si está en el centro es más grande
                         fontSize = if (estaSeleccionado) 32.sp else 26.sp
                     )
@@ -173,8 +200,8 @@ fun TimeSelector(value: Int, onValueChange: (Int) -> Unit, maxValue: Int) {
 }
 
 @Composable
-fun Separador() {
-    Text(":", color = Color.White, fontSize = 48.sp, fontWeight = FontWeight.Bold)
+fun Separador(textColor: Color) {
+    Text(":", color = textColor, fontSize = 48.sp, fontWeight = FontWeight.Bold)
 }
 
 
@@ -222,12 +249,13 @@ fun TimerControls(isActive: Boolean, onToggle: () -> Unit, onReset: () -> Unit) 
 @Composable
 fun BotonSeleccionTiempo(
     texto: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    isDarkTheme: Boolean
 ) {
     Button(
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(
-            containerColor = Color(0xFF2A3A5A)
+            containerColor = if (isDarkTheme) CardDark else CardLight
         ),
         shape = RoundedCornerShape(18.dp),
         modifier = Modifier
@@ -239,7 +267,7 @@ fun BotonSeleccionTiempo(
             text = texto,
             fontSize = 17.sp,
             fontWeight = FontWeight.SemiBold,
-            color = Color.White
+            color = if (isDarkTheme) Color.White else Color.Black
         )
     }
 }

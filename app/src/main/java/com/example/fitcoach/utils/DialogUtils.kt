@@ -9,12 +9,12 @@ import com.example.fitcoach.R
 object DialogUtils {
     // Función que maneja la apertura de whatsapp con un mensaje predeterminado
     fun handleWhatsApp(context: Context) {
-        val phoneNumber = context.getString(R.string.num_entrenador)
-        val message = context.getString(R.string.mensaje_ayuda_whatsapp) // Mensaje predeterminado
+        val numTelef = context.getString(R.string.num_entrenador)
+        val mensaje = context.getString(R.string.mensaje_ayuda_whatsapp) // Mensaje predeterminado
 
         val uri = Uri.parse(
-            "https://api.whatsapp.com/send?phone=$phoneNumber&text=${
-                Uri.encode(message)
+            "https://api.whatsapp.com/send?phone=$numTelef&text=${
+                Uri.encode(mensaje)
             }"
         )
         val intent = Intent(Intent.ACTION_VIEW, uri)
@@ -36,7 +36,7 @@ object DialogUtils {
         val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
             data = Uri.parse("mailto:")
             putExtra(Intent.EXTRA_EMAIL, arrayOf(email))
-            putExtra(Intent.EXTRA_SUBJECT, mensaje)
+            putExtra(Intent.EXTRA_SUBJECT, mensaje) // Asunto del correo
         }
         try { //Intenta abrir la app de correo
             context.startActivity(emailIntent)

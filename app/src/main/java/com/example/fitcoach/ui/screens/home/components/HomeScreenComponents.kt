@@ -319,7 +319,7 @@ fun CommonBottomBar(navController: NavHostController, isDarkTheme: Boolean) {
                 selected = navController.currentDestination?.route == item.route,
                 onClick = {
                     navController.navigate(item.route) {
-                        popUpTo(navController.graph.startDestinationId) {
+                        popUpTo(Screen.Home.route) {
                             saveState = true
                         }
                         launchSingleTop = true

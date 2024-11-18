@@ -33,8 +33,7 @@ fun CalendarScreenPreview() {
     FitCoachTheme {
         CalendarScreen(
             navController = rememberNavController(),
-            vm = CalendarViewModel(),
-            onNavigateBack = { }
+            vm = CalendarViewModel()
         )
     }
 }
@@ -49,21 +48,9 @@ fun CalendarScreenPreview() {
 fun CalendarScreen(
     navController: NavHostController,
     vm: CalendarViewModel,  // ViewModel que maneja la lógica y estado
-    onNavigateBack: () -> Unit     // Función para volver atrás
 ) {
     // Scaffold proporciona la estructura básica de la pantalla
     Scaffold(
-        // Barra superior con título y botón de retroceso
-        topBar = {
-            TopAppBar(
-                title = { Text("Calendario") },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Volver")
-                    }
-                }
-            )
-        },
         bottomBar = {
             // Barra inferior con botones de navegación
             CommonBottomBar(navController, isSystemInDarkTheme())

@@ -45,4 +45,5 @@
     <string name="not_timer_name">Temporizador de entrenamiento</string>
     <string name="not_timer_descr">Mantente enfocado en tu entrenamiento con alertas para cada descanso y sesión</string>
     <string name="toast_not_timer">No recibirás notificaciones del temporizador</string>
+    <string name="fondo_splash">Fondo de la pantalla de inicio</string>
 </resources>
