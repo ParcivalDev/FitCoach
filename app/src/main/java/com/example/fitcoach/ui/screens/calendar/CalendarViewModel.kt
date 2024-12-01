@@ -22,6 +22,41 @@ class CalendarViewModel : ViewModel() {
     var showDialog by mutableStateOf(false)
         private set
 
+
+    var isLoading by mutableStateOf(false)
+        private set
+
+    var errorMessage by mutableStateOf<String?>(null)
+        private set
+
+    // Inicializar el día seleccionado cuando se crea el ViewModel
+    init {
+        selectedDate = LocalDate.now()
+        loadNotes()
+    }
+
+    private fun loadNotes() {
+        CalendarRepository.loadNotes { result ->
+            when (result) {
+                is CalendarResult.Success -> {
+                    workoutNotes = result.data.mapKeys { (key, _) ->
+                        LocalDate.parse(key)
+                    }
+                    isLoading = false
+                    errorMessage = null
+                }
+                is CalendarResult.Error -> {
+                    isLoading = false
+                    errorMessage = result.exception.localizedMessage
+                }
+                CalendarResult.Loading -> {
+                    isLoading = true
+                    errorMessage = null
+                }
+            }
+        }
+    }
+
     // Funciones para actualizar estados
     fun onMonthChange(isNext: Boolean) {
         currentMonth = if (isNext) {
@@ -44,9 +79,57 @@ class CalendarViewModel : ViewModel() {
     }
 
     fun onSaveNote(date: LocalDate, note: String, rating: WorkoutRating) {
-        workoutNotes = workoutNotes.toMutableMap().apply {
-            put(date, WorkoutNote(note, rating))
+        val workoutNote = WorkoutNote(note, rating)
+        isLoading = true
+
+        CalendarRepository.saveNote(date.toString(), workoutNote) { result ->
+            when (result) {
+                is CalendarResult.Success -> {
+                    workoutNotes = workoutNotes.toMutableMap().apply {
+                        put(date, workoutNote)
+                    }
+                    showDialog = false
+                    isLoading = false
+                    errorMessage = null
+                }
+                is CalendarResult.Error -> {
+                    isLoading = false
+                    errorMessage = result.exception.localizedMessage
+                }
+                CalendarResult.Loading -> {
+                    isLoading = true
+                    errorMessage = null
+                }
+            }
         }
-        showDialog = false
+    }
+
+    fun onDeleteNote(date: LocalDate) {
+        isLoading = true
+
+        CalendarRepository.deleteNote(date.toString()) { result ->
+            when (result) {
+                is CalendarResult.Success -> {
+                    workoutNotes = workoutNotes.toMutableMap().apply {
+                        remove(date)
+                    }
+                    isLoading = false
+                    errorMessage = null
+                }
+                is CalendarResult.Error -> {
+                    isLoading = false
+                    errorMessage = result.exception.localizedMessage
+                }
+                CalendarResult.Loading -> {
+                    isLoading = true
+                    errorMessage = null
+                }
+            }
+        }
+    }
+
+    // Función para limpiar errores
+    fun clearError() {
+        errorMessage = null
     }
 }

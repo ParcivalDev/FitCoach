@@ -8,9 +8,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.fitcoach.ui.screens.calendar.CalendarScreen
 import com.example.fitcoach.ui.screens.calendar.CalendarViewModel
+import com.example.fitcoach.ui.screens.exercises.ExerciseLibraryScreen
+import com.example.fitcoach.ui.screens.exercises.ExerciseVideoPlayer
 import com.example.fitcoach.ui.screens.home.HomeScreen
 import com.example.fitcoach.ui.screens.home.HomeViewModel
 import com.example.fitcoach.ui.screens.timer.TimerScreen
@@ -19,7 +23,7 @@ import com.example.fitcoach.ui.screens.login.LoginViewModel
 import com.example.fitcoach.ui.screens.splash.SplashScreen
 import com.example.fitcoach.ui.screens.timer.TimerViewModel
 import kotlinx.coroutines.delay
-
+// Función que define las rutas de navegación de la aplicación
 @Composable
 fun Navigation() {
     // Controlador de la navegación para manejar las transiciones entre pantallas
@@ -94,5 +98,27 @@ fun Navigation() {
                 vm = calendarViewModel,
             )
         }
+        composable("exercises?muscleGroup={muscleGroup}") { backStackEntry ->
+            val muscleGroup = backStackEntry.arguments?.getString("muscleGroup")
+            val homeViewModel: HomeViewModel = viewModel()
+            ExerciseLibraryScreen(
+                navController = navController,
+                homeViewModel = homeViewModel,
+                initialMuscle = muscleGroup
+            )
+        }
+
+        composable(
+            route = "exercise_video/{vimeoId}/{name}"
+        ) { backStackEntry ->
+            val vimeoId = backStackEntry.arguments?.getString("vimeoId") ?: ""
+            val name = backStackEntry.arguments?.getString("name") ?: ""
+            ExerciseVideoPlayer(
+                vimeoId = vimeoId,
+                exerciseName = name,
+                navController = navController
+            )
+        }
+
     }
 }

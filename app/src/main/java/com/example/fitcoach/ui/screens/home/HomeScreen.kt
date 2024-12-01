@@ -98,7 +98,12 @@ fun HomeScreen(navController: NavHostController, vm: HomeViewModel = viewModel()
                 ExerciseLibrary(
                     vm.exercises,
                     textColor,
-                    onExerciseClick = { vm.onExerciseClick(it) }) // Se añade el parámetro para saber qué ejercicio se ha seleccionado
+                    onExerciseClick = { exercise ->
+                        navController.navigate("exercises?muscleGroup=${exercise.name}")
+                    },
+                    onSeeAllClick = { navController.navigate("exercises") }
+
+                )
                 OtherCategories(vm.categories, onCategoryClick = { vm.onCategoryClick(it) })
                 LatestNews(
                     vm.blogPost,

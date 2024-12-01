@@ -1,7 +1,10 @@
 package com.example.fitcoach.ui.screens.calendar
 
 
+import android.app.Activity
+import android.content.pm.ActivityInfo
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
@@ -17,11 +20,13 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.fitcoach.ui.screens.home.components.CommonBottomBar
+import com.example.fitcoach.ui.theme.AccentOrange
 import com.example.fitcoach.ui.theme.FitCoachTheme
 import java.time.YearMonth
 
@@ -43,12 +48,26 @@ fun CalendarScreenPreview() {
 //
 
 // Función principal que muestra la pantalla del calendario
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CalendarScreen(
     navController: NavHostController,
     vm: CalendarViewModel,  // ViewModel que maneja la lógica y estado
 ) {
+    // Contexto actual para manejar la orientación
+    val context = LocalContext.current
+
+    // Bloquea la orientación
+    DisposableEffect(Unit) {
+        val activity = context as Activity
+        val originalOrientation = activity.requestedOrientation
+        activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+
+        // Restaura la orientación original al salir
+        onDispose {
+            activity.requestedOrientation = originalOrientation
+        }
+    }
+
     // Scaffold proporciona la estructura básica de la pantalla
     Scaffold(
         bottomBar = {
@@ -79,6 +98,30 @@ fun CalendarScreen(
     // Dialog para añadir notas (solo se muestra cuando showDialog es true)
     if (vm.showDialog) {
         AddNoteDialog(vm)
+    }
+
+    // Mostrar loading
+    if (vm.isLoading) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
+    }
+
+    // Mostrar error si existe
+    vm.errorMessage?.let { error ->
+        AlertDialog(
+            onDismissRequest = { vm.clearError() },
+            title = { Text("Error") },
+            text = { Text(error) },
+            confirmButton = {
+                TextButton(onClick = { vm.clearError() }) {
+                    Text("Aceptar")
+                }
+            }
+        )
     }
 }
 
@@ -121,7 +164,8 @@ fun WeekDaysHeader() {
             Text(
                 text = day,
                 modifier = Modifier.weight(1f),
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onSurface
             )
         }
     }
@@ -155,6 +199,9 @@ fun DayCell(
     workoutNote: WorkoutNote?,  // Nota de entreno si existe
     onDateClick: () -> Unit     // Función al hacer click
 ) {
+    // Obtener la fecha actual
+    val hoy = date?.equals(LocalDate.now()) ?: false
+
     Card(
         modifier = Modifier
             .aspectRatio(1f)  // Hace que la celda sea cuadrada
@@ -164,9 +211,14 @@ fun DayCell(
             containerColor = when {
                 isSelected -> MaterialTheme.colorScheme.primaryContainer
                 workoutNote != null -> MaterialTheme.colorScheme.secondaryContainer
-                else -> MaterialTheme.colorScheme.surface
+                else -> MaterialTheme.colorScheme.surfaceVariant
             }
-        )
+        ),
+        // Añadir borde solo para el día actual
+        border = if (hoy) BorderStroke(
+            2.dp,
+            MaterialTheme.colorScheme.primary
+        ) else null
     ) {
         if (date != null) {
             Column(
@@ -175,7 +227,14 @@ fun DayCell(
                 verticalArrangement = Arrangement.Center
             ) {
                 // Número del día
-                Text(text = date.dayOfMonth.toString())
+                Text(
+                    text = date.dayOfMonth.toString(),
+                    color = when {
+                        isSelected -> MaterialTheme.colorScheme.onPrimaryContainer
+                        workoutNote != null -> MaterialTheme.colorScheme.onSecondaryContainer
+                        else -> MaterialTheme.colorScheme.onSurfaceVariant
+                    }
+                )
                 // Emoji si hay nota
                 if (workoutNote != null) {
                     Text(text = workoutNote.rating.emoji)
@@ -193,7 +252,8 @@ fun NotesArea(viewModel: CalendarViewModel) {
             // Fecha seleccionada
             Text(
                 text = "Día ${date.dayOfMonth}",
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -205,7 +265,10 @@ fun NotesArea(viewModel: CalendarViewModel) {
             } else {
                 Button(
                     onClick = viewModel::onShowDialog,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary
+                    )
                 ) {
                     Text("Añadir nota de entreno")
                 }
@@ -239,12 +302,15 @@ fun NoteCard(
 // Dialog para añadir o editar una nota
 @Composable
 fun AddNoteDialog(viewModel: CalendarViewModel) {
-    var noteText by remember { mutableStateOf("") }
-    var selectedRating by remember { mutableStateOf(WorkoutRating.GOOD) }
+    // Obtener la nota existente si la hay
+    val existingNote = viewModel.selectedDate?.let { viewModel.workoutNotes[it] }
+
+    var noteText by remember { mutableStateOf(existingNote?.note ?: "") }
+    var selectedRating by remember { mutableStateOf(existingNote?.rating ?: WorkoutRating.GOOD) }
 
     AlertDialog(
         onDismissRequest = viewModel::onHideDialog,
-        title = { Text("Añadir nota de entreno") },
+        title = { Text(if (existingNote != null) "Editar nota" else "Añadir nota") },
         text = {
             Column {
                 // Campo para escribir la nota

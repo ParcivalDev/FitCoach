@@ -46,6 +46,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -111,7 +112,8 @@ fun TopAppBarHome(isDarkTheme: Boolean, onProfileClick: () -> Unit) {
 fun ExerciseLibrary(
     exercises: List<ExerciseCategory>,
     textColor: Color,
-    onExerciseClick: (ExerciseCategory) -> Unit
+    onExerciseClick: (ExerciseCategory) -> Unit,
+    onSeeAllClick: () -> Unit
 ) {
     Column {
         Row(
@@ -127,11 +129,13 @@ fun ExerciseLibrary(
                 style = MaterialTheme.typography.titleMedium,
                 color = textColor
             )
-            Icon(
-                Icons.AutoMirrored.Rounded.ArrowForward,
-                contentDescription = "Ir a biblioteca",
-                tint = textColor
-            )
+            TextButton(onClick = onSeeAllClick) {
+                Icon(
+                    Icons.AutoMirrored.Rounded.ArrowForward,
+                    contentDescription = "Ver biblioteca completa",
+                    tint = textColor
+                )
+            }
         }
         Spacer(modifier = Modifier.height(8.dp))
         LazyRow(

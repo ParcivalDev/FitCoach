@@ -39,9 +39,9 @@ import com.example.fitcoach.ui.screens.login.components.LoginBackground
 import com.example.fitcoach.ui.screens.login.components.LoginButton
 import com.example.fitcoach.ui.screens.login.components.LoginOptions
 import com.example.fitcoach.ui.screens.login.components.PasswordField
-import com.example.fitcoach.ui.screens.login.dialogs.ContactDialog
+import com.example.fitcoach.utils.ContactDialog
 import com.example.fitcoach.utils.DialogUtils
-import com.example.fitcoach.ui.screens.login.dialogs.PasswordRecoveryDialog
+import com.example.fitcoach.ui.screens.login.dialog.PasswordRecoveryDialog
 
 
 @Composable
