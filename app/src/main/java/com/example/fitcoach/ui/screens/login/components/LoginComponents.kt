@@ -60,7 +60,7 @@ import com.example.fitcoach.ui.theme.Orange
 fun LoginBackground(isPortrait: Boolean) {
     Image(
         painter = painterResource(id = R.drawable.fondo_login),
-        contentDescription = "Fondo Login",
+        contentDescription = stringResource(R.string.fondo_login),
         modifier = Modifier.fillMaxSize(),
         contentScale = if (isPortrait) ContentScale.Crop else ContentScale.FillWidth
     )
@@ -82,7 +82,7 @@ fun LoginBackground(isPortrait: Boolean) {
 // Botón de ayuda que muestra un diálogo de contacto
 @Composable
 fun IconHelp(
-    onShowContactDialog: () -> Unit,
+    onShowContactDialog: () -> Unit, // Unit porque no devuelve nada
     isPortrait: Boolean
 ) {
     IconButton(

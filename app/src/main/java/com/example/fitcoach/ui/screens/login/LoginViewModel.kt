@@ -1,6 +1,5 @@
 package com.example.fitcoach.ui.screens.login
 
-
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.compose.runtime.getValue
@@ -132,15 +131,18 @@ class LoginViewModel : ViewModel() {
     fun login(context: Context, onNavigateToHome: () -> Unit) {
         if (!validateFields(context)) return
 
-        isLoading = true
-        errorMessage = ""
+        isLoading = true // Mostrar el indicador de carga
+        errorMessage = "" // Limpiar el mensaje de error
 
+        // Iniciar sesión con email y contraseña
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 isLoading = false
 
+                // Si la tarea es exitosa, navegar a la pantalla principal
                 if (task.isSuccessful) {
                     if (rememberMe) {
+                        // Guardar el estado de rememberMe en SharedPreferences
                         sharedPreferences.edit()
                             .putBoolean("remember_me", true)
                             .apply()
@@ -156,7 +158,8 @@ class LoginViewModel : ViewModel() {
 
     // Función para verificar si hay una sesión guardada
     fun checkSavedSession(onNavigateToHome: () -> Unit) {
-        val currentUser = auth.currentUser
+        val currentUser = auth.currentUser // Obtener el usuario actual
+        // Obtener el estado de rememberMe desde SharedPreferences
         val shouldRemember = sharedPreferences.getBoolean("remember_me", false)
 
         if (currentUser != null && shouldRemember) {
@@ -168,8 +171,9 @@ class LoginViewModel : ViewModel() {
         }
     }
 
-
+    // Función para recuperar la contraseña del usuario
     fun recoverPassword(context: Context, email: String, onSuccess: () -> Unit) {
+        // Envia un correo electrónico para restablecer la contraseña
         auth.sendPasswordResetEmail(email)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {

@@ -1,6 +1,5 @@
 package com.example.fitcoach.ui.navigation
 
-
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -8,9 +7,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavType
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.example.fitcoach.ui.screens.calendar.CalendarScreen
 import com.example.fitcoach.ui.screens.calendar.CalendarViewModel
 import com.example.fitcoach.ui.screens.exercises.ExerciseLibraryScreen
@@ -31,6 +28,7 @@ fun Navigation() {
 
     // Obtener el contexto
     val context = LocalContext.current
+    // Intenta obtener la actividad actual
     val activity = context as? ComponentActivity
     // Verificar si la pantalla fue abierta desde una notificación
     val navigateToTimer = activity?.intent?.getBooleanExtra("navigateToTimer", false) ?: false
@@ -98,6 +96,9 @@ fun Navigation() {
                 vm = calendarViewModel,
             )
         }
+
+
+        // POR REVISAR - Pantalla de la biblioteca de ejercicios
         composable("exercises?muscleGroup={muscleGroup}") { backStackEntry ->
             val muscleGroup = backStackEntry.arguments?.getString("muscleGroup")
             val homeViewModel: HomeViewModel = viewModel()
