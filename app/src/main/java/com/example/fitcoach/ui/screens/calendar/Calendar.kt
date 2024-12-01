@@ -1,6 +1,5 @@
 package com.example.fitcoach.ui.screens.calendar
 
-
 import android.app.Activity
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
@@ -26,7 +25,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.fitcoach.ui.screens.home.components.CommonBottomBar
-import com.example.fitcoach.ui.theme.AccentOrange
 import com.example.fitcoach.ui.theme.FitCoachTheme
 import java.time.YearMonth
 

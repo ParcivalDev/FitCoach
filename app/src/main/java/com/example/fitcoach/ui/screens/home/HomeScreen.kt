@@ -25,6 +25,8 @@ import com.example.fitcoach.ui.theme.BackgroundDark
 import com.example.fitcoach.ui.theme.BackgroundLight
 import com.example.fitcoach.ui.theme.CardDark
 import com.example.fitcoach.ui.theme.CardLight
+import com.example.fitcoach.utils.ContactDialog
+import com.example.fitcoach.utils.DialogUtils
 import kotlinx.coroutines.launch
 
 
@@ -53,6 +55,13 @@ fun HomeScreen(navController: NavHostController, vm: HomeViewModel = viewModel()
         vm.initSharedPreferences(context)
     }
 
+    // Muestra el diálogo de contacto si es necesario
+    if (vm.showContactDialog) {
+        ContactDialog(onDismiss = { vm.onDismissContactDialog() },
+            onWhatsAppClick = { DialogUtils.handleWhatsApp(context) },
+            onEmailClick = { DialogUtils.handleEmail(context) })
+    }
+
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
@@ -63,7 +72,7 @@ fun HomeScreen(navController: NavHostController, vm: HomeViewModel = viewModel()
                 onProfileClick = { vm.onProfileClick() },
                 onSettingsClick = { /*vm.onSettingsClick()*/ },
                 onSocialClick = { network -> vm.onSocialClick(network, context) },
-                onSupportClick = { type -> vm.onSupportClick(type) },
+                onShowContactDialog = { vm.onShowContactDialog() },
                 onLogoutClick = {
                     vm.onLogout {
                         navController.navigate(Screen.Login.route) {

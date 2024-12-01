@@ -39,6 +39,9 @@ class HomeViewModel : ViewModel() {
     var blogPost by mutableStateOf(BlogPost(title = "Blog", imageResource = R.drawable.blog_img))
         private set
 
+    var showContactDialog by mutableStateOf(false)
+        private set
+
     var hasNotifications by mutableStateOf(false)
         private set
 
@@ -121,15 +124,14 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    fun onSupportClick(type: String) {
-        when (type) {
-            "help" -> {
-                // TODO: Mostrar pantalla o diálogo de ayuda
-            }
-            "contact" -> {
-                // TODO: Mostrar diálogo de contacto
-            }
-        }
+    // Muestra el diálogo de contacto
+    fun onShowContactDialog() {
+        showContactDialog = true
+    }
+
+    // Oculta el diálogo de contacto
+    fun onDismissContactDialog() {
+        showContactDialog = false
     }
 
     fun onLogout(onNavigateToLogin: () -> Unit) {

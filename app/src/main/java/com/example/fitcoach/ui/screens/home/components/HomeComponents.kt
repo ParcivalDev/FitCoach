@@ -315,6 +315,8 @@ fun CommonBottomBar(navController: NavHostController, isDarkTheme: Boolean) {
         )
     )
 
+
+
     NavigationBar(containerColor = backgroundColor) {
         items.forEach { item ->
             NavigationBarItem(
@@ -350,7 +352,7 @@ fun DrawerContent(
     onProfileClick: () -> Unit,
     onSettingsClick: () -> Unit,
     onSocialClick: (String) -> Unit,
-    onSupportClick: (String) -> Unit,
+    onShowContactDialog: () -> Unit,
     onLogoutClick: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
@@ -418,7 +420,7 @@ fun DrawerContent(
                 icon = Icons.AutoMirrored.Rounded.Help,
                 label = "Ayuda",
                 onClick = {
-                    handleClick { onSupportClick("help") }
+                    onShowContactDialog()
                 }
             )
         }
