@@ -70,6 +70,7 @@ class CalendarViewModel : ViewModel() {
         } else {
             currentMonth.minusMonths(1)
         }
+        selectedDate = null // Limpiar la fecha seleccionada
     }
 
     // Función para seleccionar una fecha
