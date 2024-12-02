@@ -47,4 +47,15 @@
     <string name="toast_not_timer">No recibirás notificaciones del temporizador</string>
     <string name="fondo_splash">Fondo de la pantalla de inicio</string>
     <string name="fondo_login">Fondo Login</string>
+    <string name="mes_anterior">Mes anterior</string>
+    <string name="mes_siguiente">Mes siguiente</string>
+    <string name="dia_num">Día %1$s</string>
+    <string name="anhadir_nota_entreno">Añadir nota de entreno</string>
+    <string name="editar_nota">Editar nota</string>
+    <string name="anhadir_nota">Añadir nota</string>
+    <string name="que_tal_entreno">¿Qué tal el entreno?</string>
+    <string name="guardar">Guardar</string>
+    <string name="borrar_nota">Borrar nota</string>
+    <string name="aceptar">Aceptar</string>
+    <string name="error">Error</string>
 </resources>

@@ -9,37 +9,43 @@ import java.time.LocalDate
 import java.time.YearMonth
 
 class CalendarViewModel : ViewModel() {
-    // Estados básicos
+    // Estado para el mes actual
     var currentMonth by mutableStateOf(YearMonth.now())
-        private set
+        private set // Solo se puede modificar desde el ViewModel
 
+    // Estado para la fecha seleccionada
     var selectedDate by mutableStateOf<LocalDate?>(null)
         private set
 
+    // Estado para las notas de entrenamiento
     var workoutNotes by mutableStateOf<Map<LocalDate, WorkoutNote>>(emptyMap())
         private set
 
+    // Estado para mostrar/ocultar el diálogo
     var showDialog by mutableStateOf(false)
         private set
 
-
+    // Estado para mostrar/ocultar el indicador de carga
     var isLoading by mutableStateOf(false)
         private set
 
+    // Estado para mostrar mensajes de error
     var errorMessage by mutableStateOf<String?>(null)
         private set
 
     // Inicializar el día seleccionado cuando se crea el ViewModel
     init {
         selectedDate = LocalDate.now()
-        loadNotes()
+        loadNotes() // Cargar notas al iniciar
     }
 
+    // Función para cargar las notas de entrenamiento
     private fun loadNotes() {
-        CalendarRepository.loadNotes { result ->
-            when (result) {
+        CalendarRepository.loadNotes { result -> // Cargar notas desde Firestore
+            when (result) { // Actualizar estados según el resultado
+                // Si es un resultado exitoso, guarda las notas y actualiza estados
                 is CalendarResult.Success -> {
-                    workoutNotes = result.data.mapKeys { (key, _) ->
+                    workoutNotes = result.data.mapKeys { (key, _) -> // mapkeys para convertir la clave a LocalDate
                         LocalDate.parse(key)
                     }
                     isLoading = false
@@ -57,7 +63,7 @@ class CalendarViewModel : ViewModel() {
         }
     }
 
-    // Funciones para actualizar estados
+    // Funciones para cambiar el mes actual
     fun onMonthChange(isNext: Boolean) {
         currentMonth = if (isNext) {
             currentMonth.plusMonths(1)
@@ -66,7 +72,9 @@ class CalendarViewModel : ViewModel() {
         }
     }
 
+    // Función para seleccionar una fecha
     fun onDateSelect(date: LocalDate) {
+        // Actualizar la fecha seleccionada recibida como argumento
         selectedDate = date
     }
 
@@ -79,12 +87,14 @@ class CalendarViewModel : ViewModel() {
     }
 
     fun onSaveNote(date: LocalDate, note: String, rating: WorkoutRating) {
-        val workoutNote = WorkoutNote(note, rating)
+        val workoutNote = WorkoutNote(note, rating) // Crear objeto WorkoutNote
         isLoading = true
 
+        // Guardar nota en Firestore pasando la fecha a String y el objeto WorkoutNote
         CalendarRepository.saveNote(date.toString(), workoutNote) { result ->
             when (result) {
                 is CalendarResult.Success -> {
+                    // Actualizar el mapa de notas con la nueva nota
                     workoutNotes = workoutNotes.toMutableMap().apply {
                         put(date, workoutNote)
                     }
@@ -104,12 +114,14 @@ class CalendarViewModel : ViewModel() {
         }
     }
 
+    // Función para eliminar una nota
     fun onDeleteNote(date: LocalDate) {
         isLoading = true
 
         CalendarRepository.deleteNote(date.toString()) { result ->
             when (result) {
                 is CalendarResult.Success -> {
+                    // Actualizar el mapa de notas eliminando la nota
                     workoutNotes = workoutNotes.toMutableMap().apply {
                         remove(date)
                     }
