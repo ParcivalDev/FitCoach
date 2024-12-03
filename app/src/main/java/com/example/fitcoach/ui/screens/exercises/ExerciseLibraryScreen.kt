@@ -100,7 +100,7 @@ fun ExerciseLibraryScreen(
                     )
                 )
             },
-            bottomBar = { CommonBottomBar(navController, isDarkTheme) },
+            bottomBar = { CommonBottomBar(navController, isDarkTheme, isPortrait = true) }, // est
             containerColor = backgroundColor
         ) { padding ->
             LazyColumn(

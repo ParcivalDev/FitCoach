@@ -1,12 +1,14 @@
 package com.example.fitcoach.ui.screens.home
 
-
+import android.content.res.Configuration
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
@@ -17,16 +19,17 @@ import com.example.fitcoach.ui.navigation.Screen
 import com.example.fitcoach.ui.screens.home.components.CommonBottomBar
 import com.example.fitcoach.ui.screens.home.components.DrawerContent
 import com.example.fitcoach.ui.screens.home.components.ExerciseLibrary
-import com.example.fitcoach.ui.screens.home.components.Greeting
 import com.example.fitcoach.ui.screens.home.components.LatestNews
 import com.example.fitcoach.ui.screens.home.components.OtherCategories
 import com.example.fitcoach.ui.screens.home.components.TopAppBarHome
+import com.example.fitcoach.ui.screens.home.components.WelcomeMessage
 import com.example.fitcoach.ui.theme.BackgroundDark
 import com.example.fitcoach.ui.theme.BackgroundLight
 import com.example.fitcoach.ui.theme.CardDark
 import com.example.fitcoach.ui.theme.CardLight
 import com.example.fitcoach.utils.ContactDialog
 import com.example.fitcoach.utils.DialogUtils
+import com.example.fitcoach.utils.UnderDevelopmentDialog
 import kotlinx.coroutines.launch
 
 
@@ -36,7 +39,7 @@ fun HomeScreenPreview() {
     HomeScreen(rememberNavController())
 }
 
-
+// Pantalla principal de la aplicación
 @Composable
 fun HomeScreen(navController: NavHostController, vm: HomeViewModel = viewModel()) {
     val isDarkTheme = isSystemInDarkTheme()
@@ -44,13 +47,17 @@ fun HomeScreen(navController: NavHostController, vm: HomeViewModel = viewModel()
     val cardColor = if (isDarkTheme) CardDark else CardLight
     val textColor = if (isDarkTheme) Color.White else Color.Black
 
+    // Estado del cajón de navegación por defecto cerrado
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-
-
     val context = LocalContext.current
 
-    // Inicializar SharedPreferences
+    // Obtener la configuración actual del dispositivo
+    val configuration = LocalConfiguration.current
+    // Determinar si el dispositivo está en modo vertical
+    val isPortrait = configuration.orientation == Configuration.ORIENTATION_PORTRAIT
+
+    // Inicializar SharedPreferences al lanzar la pantalla para obtener el nombre de usuario¿?¿?¿?¿?
     LaunchedEffect(Unit) {
         vm.initSharedPreferences(context)
     }
@@ -62,24 +69,33 @@ fun HomeScreen(navController: NavHostController, vm: HomeViewModel = viewModel()
             onEmailClick = { DialogUtils.handleEmail(context) })
     }
 
+    // Muestra el diálogo de función en desarrollo si es necesario
+    if (vm.showUnderDevelopmentDialog) {
+        UnderDevelopmentDialog(onDismiss = vm::dismissDevelopmentDialog)
+    }
+
+    // Pantalla principal
+    // Muestra el cajón de navegación y el contenido principal
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            DrawerContent(
+            DrawerContent( // Contenido del cajón de navegación
                 userName = vm.userName,
                 backgroundColor = backgroundColor,
                 drawerState = drawerState,
                 onProfileClick = { vm.onProfileClick() },
-                onSettingsClick = { /*vm.onSettingsClick()*/ },
+                onSettingsClick = { /*vm.onSettingsClick()*/ vm.showDevelopmentDialog() },
                 onSocialClick = { network -> vm.onSocialClick(network, context) },
                 onShowContactDialog = { vm.onShowContactDialog() },
-                onLogoutClick = {
+                onLogoutClick = { // Cerrar sesión
                     vm.onLogout {
                         navController.navigate(Screen.Login.route) {
+                            // Limpiar la pila de navegación al cerrar sesión
                             popUpTo(Screen.Home.route) { inclusive = true }
                         }
                     }
-                }
+                },
+                isPortrait = isPortrait
             )
         }
     ) {
@@ -91,33 +107,61 @@ fun HomeScreen(navController: NavHostController, vm: HomeViewModel = viewModel()
                         scope.launch {
                             drawerState.open()
                         }
-                    }
+                    },
+                    onNotificationClick = { vm.showDevelopmentDialog() },
+                    isPortrait = isPortrait
                 )
             },
-            bottomBar = { CommonBottomBar(navController, isDarkTheme) },
+            bottomBar = { CommonBottomBar(navController, isDarkTheme, isPortrait) },
             containerColor = backgroundColor
         ) { paddingValues ->
-            Column(
+            LazyColumn(
+                // Contenido principal con scroll
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
-                    .padding(16.dp)
+                    .padding(horizontal = 8.dp),
             ) {
-                Greeting(vm.userName, textColor)
-                ExerciseLibrary(
-                    vm.exercises,
-                    textColor,
-                    onExerciseClick = { exercise ->
-                        navController.navigate("exercises?muscleGroup=${exercise.name}")
-                    },
-                    onSeeAllClick = { navController.navigate("exercises") }
-
-                )
-                OtherCategories(vm.categories, onCategoryClick = { vm.onCategoryClick(it) })
-                LatestNews(
-                    vm.blogPost,
-                    cardColor,
-                    onBlogClick = { vm.onBlogClick() }) // No se añade el parámetro porque solo hay un elemento
+                item {
+                    WelcomeMessage(
+                        userName = vm.userName,
+                        textColor = textColor,
+                        isPortrait = isPortrait
+                    )
+                }
+                // Mostrar la biblioteca de ejercicios
+                item {
+                    ExerciseLibrary(
+                        exercises = vm.exercises,
+                        textColor = textColor,
+                        onExerciseClick = { exercise ->
+                            navController.navigate("exercises?muscleGroup=${exercise.name}")
+                        },
+                        onSeeAllClick = { navController.navigate("exercises") },
+                        isPortrait = isPortrait
+                    )
+                }
+                // Mostrar las demás funciones
+                item {
+                    OtherCategories(
+                        categories = vm.categories,
+                        /*onCategoryClick = { category ->
+                            vm.onCategoryClick(category, navController::navigate)
+                        },*/
+                        onCategoryClick = { vm.showDevelopmentDialog() },
+                        isPortrait = isPortrait
+                    )
+                }
+                // Mostrar las últimas noticias
+                item {
+                    LatestNews(
+                        blogPost = vm.blogPost,
+                        cardColor = cardColor,
+                        /*onBlogClick = { vm.onBlogClick() },*/
+                        onBlogClick = { vm.showDevelopmentDialog() },
+                        isPortrait = isPortrait
+                    )
+                }
             }
         }
     }

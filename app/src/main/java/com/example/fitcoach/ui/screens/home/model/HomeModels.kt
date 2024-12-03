@@ -14,6 +14,6 @@ data class Category(
 
 // Representa la entrada del blog
 data class BlogPost(
-    val title: String = "Blog",  // Título del post
+    val title: String,  // Título del post
     val imageResource: Int       // Imagen de fondo
 )

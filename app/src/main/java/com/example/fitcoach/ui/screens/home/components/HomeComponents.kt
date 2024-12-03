@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -58,7 +59,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.fitcoach.R
 import com.example.fitcoach.ui.navigation.Screen
@@ -72,32 +75,44 @@ import com.example.fitcoach.ui.theme.DarkBlueLight
 import kotlinx.coroutines.launch
 
 
+// Barra superior de la pantalla de inicio
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopAppBarHome(isDarkTheme: Boolean, onProfileClick: () -> Unit) {
+fun TopAppBarHome(
+    isDarkTheme: Boolean,
+    onProfileClick: () -> Unit,
+    onNotificationClick: () -> Unit,
+    isPortrait: Boolean
+) {
     val backgroundColor = if (isDarkTheme) DarkBlueDark else DarkBlueLight
     val contentColor = Color.White
     TopAppBar(
         title = {
-            Box(
+            Box( // Centra el logo en la barra superior
                 modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.Center
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.logo_app),
-                    contentDescription = "SM Logo",
-                    modifier = Modifier.size(50.dp)
+                    contentDescription = stringResource(R.string.sm_logo),
+                    modifier = Modifier.size(if (isPortrait) 50.dp else 40.dp)
                 )
             }
         },
-        navigationIcon = {
+        navigationIcon = { // navigationIcon es el icono de perfil en la barra superior izquierda
             IconButton(onClick = onProfileClick) {
-                Icon(Icons.Rounded.AccountCircle, contentDescription = "Perfil")
+                Icon(
+                    Icons.Rounded.AccountCircle,
+                    contentDescription = stringResource(R.string.perfil)
+                )
             }
         },
-        actions = {
-            IconButton(onClick = { /* TODO */ }) {
-                Icon(Icons.Rounded.Notifications, contentDescription = "Notificaciones")
+        actions = { // actions son los iconos de notificaciones en la barra superior derecha
+            IconButton(onClick = { onNotificationClick() }) {
+                Icon(
+                    Icons.Rounded.Notifications,
+                    contentDescription = stringResource(R.string.notificaciones)
+                )
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(
@@ -108,149 +123,200 @@ fun TopAppBarHome(isDarkTheme: Boolean, onProfileClick: () -> Unit) {
     )
 }
 
+// Biblioteca de ejercicios
+// Muestra una lista de ejercicios con sus imágenes y nombres
+// También muestra un botón para ver la biblioteca completa
 @Composable
 fun ExerciseLibrary(
     exercises: List<ExerciseCategory>,
     textColor: Color,
     onExerciseClick: (ExerciseCategory) -> Unit,
-    onSeeAllClick: () -> Unit
+    onSeeAllClick: () -> Unit,
+    isPortrait: Boolean
 ) {
     Column {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp),
+                .padding(horizontal = 8.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
-
-            ) {
+        ) {
             Text(
-                "Biblioteca de ejercicios",
+                stringResource(R.string.biblioteca_de_ejercicios),
                 style = MaterialTheme.typography.titleMedium,
                 color = textColor
             )
-            TextButton(onClick = onSeeAllClick) {
+            TextButton(onClick = onSeeAllClick) { // Botón para ver la biblioteca completa
                 Icon(
                     Icons.AutoMirrored.Rounded.ArrowForward,
-                    contentDescription = "Ver biblioteca completa",
+                    contentDescription = stringResource(R.string.ver_biblioteca_completa),
                     tint = textColor
                 )
             }
         }
         Spacer(modifier = Modifier.height(8.dp))
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        LazyRow( // Muestra los ejercicios en una fila horizontal con scroll
+            horizontalArrangement = Arrangement.spacedBy(if (isPortrait) 8.dp else 4.dp),
+            modifier = Modifier.padding(vertical = if (isPortrait) 8.dp else 4.dp)
         ) {
             items(exercises) { exercise ->
                 ExerciseItem(
                     exercise = exercise,
                     textColor = textColor,
-                    onExerciseClick = { onExerciseClick(exercise) }
+                    onExerciseClick = { onExerciseClick(exercise) },
+                    isPortrait = isPortrait
                 )
             }
         }
     }
 }
 
+// Muestra un ejercicio con su imagen y nombre
 @Composable
 fun ExerciseItem(
-    exercise: ExerciseCategory,
+    exercise: ExerciseCategory, // Ejercicio a mostrar se compone de nombre e imagen
     textColor: Color,
-    onExerciseClick: (ExerciseCategory) -> Unit
+    onExerciseClick: (ExerciseCategory) -> Unit,
+    isPortrait: Boolean
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .padding(8.dp)
+            .padding(if (isPortrait) 8.dp else 4.dp)
             .clickable { onExerciseClick(exercise) }
     ) {
-        Image(
+        Image( // Imagen del ejercicio
             painter = painterResource(id = exercise.imageResource),
-            contentDescription = "Imagen de ${exercise.name}",
+            contentDescription = stringResource(R.string.imagen_de, exercise.name),
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .size(70.dp)
+                .size(if (isPortrait) 70.dp else 60.dp)
                 .clip(CircleShape)
         )
-        Spacer(modifier = Modifier.height(6.dp))
-        Text(exercise.name, style = MaterialTheme.typography.bodyMedium, color = textColor)
+        Spacer(modifier = Modifier.height(if (isPortrait) 6.dp else 4.dp))
+        Text( // Nombre del ejercicio
+            exercise.name,
+            style = MaterialTheme.typography.bodyMedium.copy(
+                fontSize = if (isPortrait) 14.sp else 12.sp
+            ),
+            color = textColor
+        )
     }
 }
 
-
+// Otras categorías de la pantalla de inicio (Entrenamiento, Academia, Progreso, Tienda)
 @Composable
-fun OtherCategories(categories: List<Category>, onCategoryClick: (Category) -> Unit) {
-    Column(
+fun OtherCategories(
+    categories: List<Category>,
+    onCategoryClick: (Category) -> Unit,
+    isPortrait: Boolean
+) {
+    Column( // Muestra las categorías en dos filas con dos elementos cada una
         verticalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = Modifier.padding(top = 16.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
     ) {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            CategoryItem(categories[0], { onCategoryClick(categories[0]) }, Modifier.weight(1f))
-            CategoryItem(categories[1], { onCategoryClick(categories[1]) }, Modifier.weight(1f))
+            CategoryItem( // Cada categoría se muestra como un Card con imagen y nombre
+                categories[0],
+                { onCategoryClick(categories[0]) },
+                Modifier.weight(1f),
+                isPortrait
+            )
+            CategoryItem(
+                categories[1],
+                { onCategoryClick(categories[1]) },
+                Modifier.weight(1f),
+                isPortrait
+            )
         }
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            CategoryItem(categories[2], { onCategoryClick(categories[2]) }, Modifier.weight(1f))
-            CategoryItem(categories[3], { onCategoryClick(categories[3]) }, Modifier.weight(1f))
+            CategoryItem(
+                categories[2],
+                { onCategoryClick(categories[2]) },
+                Modifier.weight(1f),
+                isPortrait
+            )
+            CategoryItem(
+                categories[3],
+                { onCategoryClick(categories[3]) },
+                Modifier.weight(1f),
+                isPortrait
+            )
         }
     }
 }
 
+// Cada categoría se muestra como un Card con imagen y nombre
 @Composable
-fun CategoryItem(category: Category, onCategoryClick: () -> Unit, modifier: Modifier = Modifier) {
+fun CategoryItem(
+    category: Category,
+    onCategoryClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    isPortrait: Boolean
+) {
     Card(
         modifier = modifier
-            .aspectRatio(1f)
+            .let { // Ajusta la relación de aspecto de la imagen
+                if (isPortrait) {
+                    it.aspectRatio(1f) // Cuadrado en portrait
+                } else {
+                    it.aspectRatio(2f)  // Más ancho que alto en landscape
+                }
+            }
             .padding(4.dp)
             .clickable { onCategoryClick() },
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = CardDark)
     ) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            // Imagen de fondo
+        Box(modifier = Modifier.fillMaxSize()) { // Contenedor de la imagen y el nombre
             Image(
                 painter = painterResource(id = category.imageResource),
-                contentDescription = "Imagen de ${category.name}",
+                contentDescription = stringResource(R.string.imagen_de, category.name),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
             )
 
-            // Overlay para mejorar la legibilidad del texto
-            Box(
+            Box( // Fondo oscuro con transparencia para mejorar la legibilidad del texto
                 modifier = Modifier
                     .fillMaxSize()
                     .background(Color.Black.copy(alpha = 0.1f))
-
             )
 
-            // Texto de la categoría
             Text(
                 text = category.name,
                 style = MaterialTheme.typography.titleMedium,
                 color = Color.White,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .padding(8.dp)
+                    .padding(16.dp)
             )
         }
     }
 }
 
-
+// Función para mostrar el blog
 @Composable
-fun LatestNews(blogPost: BlogPost, cardColor: Color, onBlogClick: () -> Unit) {
-    Card(
+fun LatestNews(
+    blogPost: BlogPost,
+    cardColor: Color,
+    onBlogClick: () -> Unit,
+    isPortrait: Boolean
+) {
+    Card( // Muestra el blog como un Card con imagen y título
         modifier = Modifier
             .fillMaxWidth()
-            .height(100.dp)
-            .padding(vertical = 16.dp)
+            .height(if (isPortrait) 100.dp else 80.dp)
+            .padding(vertical = 8.dp, horizontal = 12.dp)
             .clickable { onBlogClick() },
         colors = CardDefaults.cardColors(containerColor = cardColor)
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
-            // Imagen de fondo
             Image(
                 painter = painterResource(id = blogPost.imageResource),
-                contentDescription = "Imagen de blog",
+                contentDescription = stringResource(R.string.imagen_de_blog),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
             )
@@ -259,77 +325,105 @@ fun LatestNews(blogPost: BlogPost, cardColor: Color, onBlogClick: () -> Unit) {
                 modifier = Modifier
                     .fillMaxSize()
                     .background(Color.Black.copy(alpha = 0.4f))
-
             )
 
-            Row(
+            Row( // Título del blog centrado en la imagen de fondo con un icono
                 modifier = Modifier.fillMaxSize(),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Newspaper,
-                    contentDescription = "Icono de blog",
+                    contentDescription = stringResource(R.string.icono_de_blog),
                     tint = Color.White,
                     modifier = Modifier
-                        .padding(horizontal = 8.dp)
-                        .size(30.dp)
+                        .padding(horizontal = if (isPortrait) 8.dp else 4.dp)
+                        .size(if (isPortrait) 30.dp else 24.dp)
                 )
-                // Texto de la categoría
                 Text(
                     text = blogPost.title,
-                    style = MaterialTheme.typography.titleLarge,
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontSize = if (isPortrait) 24.sp else 20.sp
+                    ),
                     color = Color.White,
-                    modifier = Modifier
-                        .padding(8.dp)
+                    modifier = Modifier.padding(if (isPortrait) 8.dp else 4.dp)
                 )
             }
         }
     }
 }
 
+// Saludo personalizado en la barra superior
 @Composable
-fun Greeting(userName: String, textColor: Color) {
+fun WelcomeMessage(userName: String, textColor: Color, isPortrait: Boolean) {
     Text(
-        "Hola, $userName!",
-        style = MaterialTheme.typography.headlineSmall,
+        stringResource(R.string.hola_user, userName),
+        style = MaterialTheme.typography.headlineSmall.copy(
+            fontSize = if (isPortrait) 24.sp else 20.sp
+        ),
         color = textColor,
+        modifier = Modifier.padding(
+            horizontal = 8.dp,
+            vertical = 4.dp
+        )
     )
 }
 
-
+// Barra de navegación inferior común a todas las pantallas
 @Composable
-fun CommonBottomBar(navController: NavHostController, isDarkTheme: Boolean) {
+fun CommonBottomBar(
+    navController: NavHostController,
+    isDarkTheme: Boolean,
+    isPortrait: Boolean
+) {
     val backgroundColor = if (isDarkTheme) DarkBlueDark else DarkBlueLight
     val contentColor = Color.White
 
+    // Elementos de la barra de navegación
     data class NavItem(val icon: ImageVector, val label: String, val route: String)
 
-    val items = listOf(
-        NavItem(Icons.Rounded.Timer, "Temporizador", Screen.Timer.route),
-        NavItem(Icons.Rounded.Home, "Inicio", Screen.Home.route),
+    val items = listOf( // Lista de elementos de la barra de navegación
+        NavItem(Icons.Rounded.Timer, stringResource(R.string.temporizador), Screen.Timer.route),
+        NavItem(Icons.Rounded.Home, stringResource(R.string.inicio), Screen.Home.route),
         NavItem(
             Icons.Rounded.DateRange,
-            "Calendario",
+            stringResource(R.string.calendario),
             Screen.Calendar.route
         )
     )
 
-
-
-    NavigationBar(containerColor = backgroundColor) {
-        items.forEach { item ->
+    // Barra de navegación con los elementos de la lista
+    NavigationBar(
+        containerColor = backgroundColor,
+        modifier = Modifier.height(if (isPortrait) 80.dp else 64.dp)
+    ) {
+        items.forEach { item -> // Cada elemento es un NavigationBarItem
             NavigationBarItem(
-                icon = { Icon(item.icon, contentDescription = item.label) },
-                label = { Text(item.label) },
+                icon = {
+                    Icon(
+                        item.icon,
+                        contentDescription = item.label,
+                        modifier = Modifier.size(if (isPortrait) 24.dp else 20.dp)
+                    )
+                },
+                label = {
+                    Text(
+                        item.label, fontSize = if (isPortrait) 12.sp else 10.sp
+                    )
+                },
+                // Navega a la ruta del elemento si está seleccionado
                 selected = navController.currentDestination?.route == item.route,
+                // Navega a la ruta del elemento al hacer clic
+                // También cierra el cajón de navegación si está abierto para evitar superposiciones
                 onClick = {
                     navController.navigate(item.route) {
                         popUpTo(Screen.Home.route) {
                             saveState = true
                         }
-                        launchSingleTop = true
-                        restoreState = true
+                        launchSingleTop =
+                            true // Evita que se creen nuevas instancias evitando duplicados en la pila
+                        restoreState =
+                            true // Restaura el estado de la pantalla si ya está en la pila
                     }
                 },
                 colors = NavigationBarItemDefaults.colors(
@@ -337,13 +431,14 @@ fun CommonBottomBar(navController: NavHostController, isDarkTheme: Boolean) {
                     unselectedIconColor = contentColor.copy(alpha = 0.7f),
                     selectedTextColor = AccentOrange,
                     unselectedTextColor = contentColor.copy(alpha = 0.7f),
-                    indicatorColor = contentColor.copy(alpha = 0.1f)
+                    indicatorColor = contentColor.copy(alpha = 0.1f) // Color de fondo del elemento seleccionado
                 )
             )
         }
     }
 }
 
+// Función para mostrar el menú lateral
 @Composable
 fun DrawerContent(
     userName: String,
@@ -353,162 +448,196 @@ fun DrawerContent(
     onSettingsClick: () -> Unit,
     onSocialClick: (String) -> Unit,
     onShowContactDialog: () -> Unit,
-    onLogoutClick: () -> Unit
+    onLogoutClick: () -> Unit,
+    isPortrait: Boolean
 ) {
+    // CoroutineScope para manejar las acciones de cierre del cajón de navegación
     val scope = rememberCoroutineScope()
 
     fun handleClick(action: () -> Unit) {
         scope.launch {
-            drawerState.close()
+            drawerState.close() // Cierra el cajón de navegación antes de ejecutar la acción
             action()
         }
     }
+
+    // Contenido del cajón de navegación
     ModalDrawerSheet(
-        modifier = Modifier.width(300.dp),
+        modifier = Modifier.width(if (isPortrait) 300.dp else 280.dp),
         drawerContainerColor = backgroundColor
     ) {
-        // Header con foto de perfil y nombre
-        DrawerHeader(userName)
-
-        // Sección Usuario
-        DrawerSection(title = "Usuario") {
-            DrawerItem(
-                icon = Icons.Rounded.Person,
-                label = "Mi perfil",
-                onClick = {
-                    handleClick(onProfileClick)
-
-                }
-            )
-            DrawerItem(
-                icon = Icons.Rounded.Settings,
-                label = "Ajustes",
-                onClick = {
-                    handleClick(onSettingsClick)
-                }
-            )
-        }
-
-        // Sección Social
-        DrawerSection(title = "Social") {
-            DrawerItem(
-                icon = R.drawable.instagram_icon,
-                label = "Instagram",
-                onClick = {
-                    handleClick { onSocialClick("instagram") }
-                }
-            )
-            DrawerItem(
-                icon = R.drawable.youtube_icon,
-                label = "YouTube",
-                onClick = {
-                    handleClick { onSocialClick("youtube") }
-                }
-            )
-            DrawerItem(
-                icon = R.drawable.spotify_icon,
-                label = "Spotify",
-                onClick = {
-                    handleClick { onSocialClick("spotify") }
-                }
-            )
-        }
-
-        // Sección ayuda
-        DrawerSection(title = "Ayuda") {
-            DrawerItem(
-                icon = Icons.AutoMirrored.Rounded.Help,
-                label = "Ayuda",
-                onClick = {
-                    onShowContactDialog()
-                }
-            )
-        }
-
-        Spacer(modifier = Modifier.weight(1f))
-        HorizontalDivider(Modifier.fillMaxWidth())
-        // Botón de Cerrar Sesión
-        DrawerItem(
-            icon = Icons.AutoMirrored.Rounded.Logout,
-            label = "Cerrar Sesión",
-            onClick = {
-                handleClick(onLogoutClick)
+        LazyColumn { // Columna con elementos del cajón de navegación (Header, Secciones, Cerrar Sesión) con scroll
+            item { // Header con foto de perfil y nombre
+                DrawerHeader(userName, isPortrait)
             }
-        )
+
+            item { // Sección Usuario
+                DrawerSection(title = stringResource(R.string.usuario), isPortrait = isPortrait) {
+                    DrawerItem( // Elemento de la sección Usuario
+                        icon = Icons.Rounded.Person,
+                        label = stringResource(R.string.mi_perfil),
+                        onClick = {
+                            handleClick(onProfileClick)
+
+                        },
+                        isPortrait = isPortrait
+                    )
+                    DrawerItem(
+                        icon = Icons.Rounded.Settings,
+                        label = stringResource(R.string.ajustes),
+                        onClick = {
+                            handleClick(onSettingsClick)
+                        },
+                        isPortrait = isPortrait
+                    )
+                }
+            }
+            item { // Sección Social
+                DrawerSection(title = stringResource(R.string.social), isPortrait = isPortrait) {
+                    DrawerItem(
+                        icon = R.drawable.instagram_icon,
+                        label = stringResource(R.string.instagram),
+                        onClick = {
+                            handleClick { onSocialClick("instagram") }
+                        },
+                        isPortrait = isPortrait
+                    )
+                    DrawerItem(
+                        icon = R.drawable.youtube_icon,
+                        label = stringResource(R.string.youtube),
+                        onClick = {
+                            handleClick { onSocialClick("youtube") }
+                        },
+                        isPortrait = isPortrait
+                    )
+                    DrawerItem(
+                        icon = R.drawable.spotify_icon,
+                        label = stringResource(R.string.spotify),
+                        onClick = {
+                            handleClick { onSocialClick("spotify") }
+                        },
+                        isPortrait = isPortrait
+                    )
+                }
+            }
+
+            item {  // Sección ayuda
+                DrawerSection(title = "Ayuda", isPortrait = isPortrait) {
+                    DrawerItem(
+                        icon = Icons.AutoMirrored.Rounded.Help,
+                        label = stringResource(R.string.ayuda),
+                        onClick = {
+                            onShowContactDialog()
+                        },
+                        isPortrait = isPortrait
+                    )
+                }
+            }
+
+            item {
+                Spacer(modifier = Modifier.weight(1f))
+                HorizontalDivider(Modifier.fillMaxWidth())
+                // Botón de Cerrar Sesión
+                DrawerItem(
+                    icon = Icons.AutoMirrored.Rounded.Logout,
+                    label = stringResource(R.string.cerrar_sesi_n),
+                    onClick = {
+                        handleClick(onLogoutClick)
+                    },
+                    isPortrait = isPortrait
+                )
+            }
+        }
     }
 }
 
+// Función para el encabezado del menú lateral
+// Muestra la foto de perfil y el nombre del usuario
 @Composable
-private fun DrawerHeader(userName: String) {
+private fun DrawerHeader(userName: String, isPortrait: Boolean) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(200.dp)
+            .height(if (isPortrait) 200.dp else 160.dp)
             .background(MaterialTheme.colorScheme.primary)
     ) {
         Column(
             modifier = Modifier
-                .padding(16.dp)
+                .padding(if (isPortrait) 16.dp else 12.dp)
                 .align(Alignment.BottomStart)
         ) {
             Image(
                 imageVector = Icons.Default.AccountCircle,
-                contentDescription = "Foto de perfil",
+                contentDescription = stringResource(R.string.foto_de_perfil),
                 modifier = Modifier
-                    .size(60.dp)
-                    .clip(CircleShape)
+                    .size(if (isPortrait) 60.dp else 50.dp)
+                    .clip(CircleShape) // Foto de perfil redonda
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(if (isPortrait) 16.dp else 12.dp))
             Text(
                 text = userName,
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.titleMedium.copy(
+                    fontSize = if (isPortrait) 20.sp else 18.sp
+                ),
                 color = Color.White
             )
         }
     }
 }
 
+// Función para mostrar las secciones del menú lateral
 @Composable
 private fun DrawerSection(
     title: String,
+    isPortrait: Boolean,
     content: @Composable () -> Unit
 ) {
     Column {
-        Text(
+        Text( // Título de la sección
             text = title,
             style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(start = 28.dp, top = 16.dp, bottom = 8.dp)
+            modifier = Modifier.padding(
+                start = if (isPortrait) 28.dp else 24.dp,
+                top = if (isPortrait) 16.dp else 12.dp,
+                bottom = if (isPortrait) 8.dp else 6.dp
+            )
         )
-        content()
+        content() // Contenido de la sección
     }
 }
 
+// Función para mostrar los elementos del menú lateral (icono y etiqueta)
 @Composable
 private fun DrawerItem(
     icon: Any,
     label: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    isPortrait: Boolean
 ) {
     NavigationDrawerItem(
         icon = {
-            when (icon) {
+            when (icon) { // Icono puede ser un ImageVector o un recurso de imagenes
                 is ImageVector -> Icon(
                     imageVector = icon,
                     contentDescription = label,
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(if (isPortrait) 24.dp else 20.dp)
                 )
 
                 is Int -> Icon(
                     painter = painterResource(id = icon),
                     contentDescription = label,
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(if (isPortrait) 24.dp else 20.dp)
                 )
             }
         },
-        label = { Text(label) },
+        label = { // Etiqueta del elemento
+            Text(
+                label, fontSize = if (isPortrait) 14.sp else 12.sp
+            )
+        },
         selected = false,
         onClick = onClick,
-        modifier = Modifier.padding(horizontal = 12.dp)
+        modifier = Modifier.padding(horizontal = if (isPortrait) 12.dp else 8.dp)
     )
 }

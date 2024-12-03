@@ -45,8 +45,13 @@ class HomeViewModel : ViewModel() {
     var hasNotifications by mutableStateOf(false)
         private set
 
+    var showUnderDevelopmentDialog by mutableStateOf(false)
+        private set
+
+
     init {
         loadInitialData()
+        loadUserName()
     }
 
     private fun loadInitialData() {
@@ -87,25 +92,16 @@ class HomeViewModel : ViewModel() {
         // TODO: Implementar navegación al blog
     }
 
-    fun onExerciseClick(exercise: ExerciseCategory) {
-        // TODO: Navegar a ejercicios específicos
+    fun onExerciseClick(exercise: ExerciseCategory, onNavigate: (String) -> Unit) {
+        onNavigate("exercises?muscleGroup=${exercise.name}")
     }
 
-    fun onCategoryClick(category: Category) {
-        // TODO: Navegar a la categoría específica
-        // Ejemplo: navegar según el nombre de la categoría
+    fun onCategoryClick(category: Category, onNavigate: (String) -> Unit) {
         when (category.name) {
-            "Entrenamiento" -> { /* Navegar a pantalla de entrenamiento */
-            }
-
-            "Academia" -> { /* Navegar a pantalla de academia */
-            }
-
-            "Progreso" -> { /* Navegar a pantalla de progreso */
-            }
-
-            "Tienda" -> { /* Navegar a pantalla de tienda */
-            }
+            "Entrenamiento" -> onNavigate("training")
+            "Academia" -> onNavigate("academy")
+            "Progreso" -> onNavigate("progress")
+            "Tienda" -> onNavigate("store")
         }
     }
 
@@ -132,6 +128,20 @@ class HomeViewModel : ViewModel() {
     // Oculta el diálogo de contacto
     fun onDismissContactDialog() {
         showContactDialog = false
+    }
+
+    fun showDevelopmentDialog() {
+        showUnderDevelopmentDialog = true
+    }
+
+    fun dismissDevelopmentDialog() {
+        showUnderDevelopmentDialog = false
+    }
+
+    // Añadir función para obtener nombre del usuario actual
+    private fun loadUserName() {
+        val user = auth.currentUser
+        userName = user?.displayName ?: "Usuario"
     }
 
     fun onLogout(onNavigateToLogin: () -> Unit) {

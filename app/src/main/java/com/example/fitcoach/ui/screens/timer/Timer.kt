@@ -77,7 +77,7 @@ fun TimerScreen(
 
     Scaffold(
         // Barra de navegación inferior
-        bottomBar = { CommonBottomBar(navController, isSystemInDarkTheme()) }
+        bottomBar = { CommonBottomBar(navController,  isSystemInDarkTheme(), isPortrait = true) }
     ) { paddingValues ->
         val backgroundColor = if (isSystemInDarkTheme()) BackgroundDark else BackgroundLight
 

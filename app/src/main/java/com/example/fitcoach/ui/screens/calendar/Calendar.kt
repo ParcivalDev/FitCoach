@@ -70,7 +70,7 @@ fun CalendarScreen(
     Scaffold(
         bottomBar = {
             // Barra inferior con botones de navegación
-            CommonBottomBar(navController, isSystemInDarkTheme())
+            CommonBottomBar(navController, isSystemInDarkTheme(), isPortrait = true)
         }
     ) { padding ->
         // Contenido principal en una columna
