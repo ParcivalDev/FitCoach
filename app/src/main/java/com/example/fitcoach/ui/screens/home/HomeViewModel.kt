@@ -15,13 +15,16 @@ import com.example.fitcoach.ui.screens.home.model.BlogPost
 import com.example.fitcoach.ui.screens.home.model.Category
 import com.example.fitcoach.ui.screens.home.model.ExerciseCategory
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
-
+// ViewModel para la pantalla de inicio
 class HomeViewModel : ViewModel() {
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+    // Referencia a la base de datos Firestore
+    private val db: FirebaseFirestore = FirebaseFirestore.getInstance()
     private lateinit var sharedPreferences: SharedPreferences
 
-
+    // Inicializa el archivo de preferencias compartidas
     fun initSharedPreferences(context: Context) {
         // Abre el mismo archivo "login_prefs" que tiene LoginViewModel
         sharedPreferences = context.getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
@@ -50,10 +53,11 @@ class HomeViewModel : ViewModel() {
 
 
     init {
-        loadInitialData()
-        loadUserName()
+        loadInitialData() // Carga los datos iniciales
+        loadUserName() // Carga el nombre del usuario
     }
 
+    // Carga los datos iniciales
     private fun loadInitialData() {
         exercises = listOf(
             ExerciseCategory("Pectoral", R.drawable.pectoral_img),
@@ -105,6 +109,7 @@ class HomeViewModel : ViewModel() {
         }
     }
 
+    // Abre el enlace a la red social correspondiente
     fun onSocialClick(network: String, context: Context) {
         val url = when (network) {
             "instagram" -> "https://www.instagram.com/sergiomcoach/?hl=es"
@@ -138,12 +143,26 @@ class HomeViewModel : ViewModel() {
         showUnderDevelopmentDialog = false
     }
 
-    // Añadir función para obtener nombre del usuario actual
+    // Carga el nombre del usuario
+    // Busca el nombre del usuario en la colección "users" de Firestore
+    // usando el ID del usuario actual
     private fun loadUserName() {
-        val user = auth.currentUser
-        userName = user?.displayName ?: "Usuario"
+        auth.currentUser?.let { user ->
+            db.collection("users")
+                .document(user.uid)
+                .get()
+                .addOnSuccessListener { document ->
+                    if (document != null && document.exists()) {
+                        userName = document.getString("name") ?: "Usuario"
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    Log.e("HomeViewModel", "Error al cargar el nombre del usuario", exception)
+                }
+        }
     }
 
+    // Maneja el cierre de sesión
     fun onLogout(onNavigateToLogin: () -> Unit) {
         try {
             sharedPreferences.edit().clear().apply()
