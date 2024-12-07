@@ -73,7 +73,7 @@ class HomeViewModel : ViewModel() {
             ExerciseCategory("Isquios", R.drawable.isquios_img),
             ExerciseCategory("Gemelos", R.drawable.gemelos_img),
             ExerciseCategory("Aductores", R.drawable.aductores_img)
-        )
+        ).sortedBy { it.name }
 
         categories = listOf(
             Category("Entrenamiento", R.drawable.entrenamiento_img),

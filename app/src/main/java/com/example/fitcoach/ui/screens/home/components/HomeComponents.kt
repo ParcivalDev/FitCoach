@@ -416,14 +416,24 @@ fun CommonBottomBar(
                 // Navega a la ruta del elemento al hacer clic
                 // También cierra el cajón de navegación si está abierto para evitar superposiciones
                 onClick = {
-                    navController.navigate(item.route) {
-                        popUpTo(Screen.Home.route) {
-                            saveState = true
+                    when (item.route) {
+                        Screen.Home.route -> {
+                            if (navController.currentDestination?.route != Screen.Home.route) {
+                                navController.navigate(Screen.Home.route) {
+                                    popUpTo(0) {
+                                        inclusive = true
+                                    }
+                                }
+                            }
                         }
-                        launchSingleTop =
-                            true // Evita que se creen nuevas instancias evitando duplicados en la pila
-                        restoreState =
-                            true // Restaura el estado de la pantalla si ya está en la pila
+                        else -> {
+                            if (navController.currentDestination?.route != item.route) {
+                                navController.navigate(item.route) {
+                                    popUpTo(Screen.Home.route)
+                                    launchSingleTop = true
+                                }
+                            }
+                        }
                     }
                 },
                 colors = NavigationBarItemDefaults.colors(

@@ -414,7 +414,7 @@ fun AddNoteDialog(viewModel: CalendarViewModel) {
 private fun getDaysInMonth(yearMonth: YearMonth): List<LocalDate?> {
     val daysInMonth = yearMonth.lengthOfMonth()
     val firstDayOfMonth = yearMonth.atDay(1)
-    val firstDayOfWeek = firstDayOfMonth.dayOfWeek.value % 7
+    val firstDayOfWeek = firstDayOfMonth.dayOfWeek.value - 1
 
     return buildList {
         // Días vacíos al inicio para alinear con el día de la semana correcto

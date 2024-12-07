@@ -134,8 +134,12 @@ fun HomeScreen(navController: NavHostController, vm: HomeViewModel = viewModel()
                     ExerciseLibrary(
                         exercises = vm.exercises,
                         textColor = textColor,
-                        onExerciseClick = { exercise ->
+                        /*onExerciseClick = { exercise ->
                             navController.navigate("exercises?muscleGroup=${exercise.name}")
+                        },*/
+                        // En HomeScreen.kt, dentro de ExerciseLibrary
+                        onExerciseClick = { exercise ->
+                            navController.navigate(Screen.ExerciseLibrary.createRoute(exercise.name))
                         },
                         onSeeAllClick = { navController.navigate("exercises") },
                         isPortrait = isPortrait
@@ -148,7 +152,13 @@ fun HomeScreen(navController: NavHostController, vm: HomeViewModel = viewModel()
                         /*onCategoryClick = { category ->
                             vm.onCategoryClick(category, navController::navigate)
                         },*/
-                        onCategoryClick = { vm.showDevelopmentDialog() },
+                        onCategoryClick = { category ->
+                            if (category.name == "Academia") {
+                                navController.navigate(Screen.Academy.createRoute())
+                            } else {
+                                vm.showDevelopmentDialog()
+                            }
+                        },
                         isPortrait = isPortrait
                     )
                 }

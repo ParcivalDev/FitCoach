@@ -1,5 +1,6 @@
 package com.example.fitcoach.ui.navigation
 
+
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -7,11 +8,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.example.fitcoach.ui.screens.academy.AcademyScreen
 import com.example.fitcoach.ui.screens.calendar.CalendarScreen
 import com.example.fitcoach.ui.screens.calendar.CalendarViewModel
 import com.example.fitcoach.ui.screens.exercises.ExerciseLibraryScreen
-import com.example.fitcoach.ui.screens.exercises.ExerciseVideoPlayer
 import com.example.fitcoach.ui.screens.home.HomeScreen
 import com.example.fitcoach.ui.screens.home.HomeViewModel
 import com.example.fitcoach.ui.screens.timer.TimerScreen
@@ -98,28 +101,81 @@ fun Navigation() {
         }
 
 
-        // POR REVISAR - Pantalla de la biblioteca de ejercicios
-        composable("exercises?muscleGroup={muscleGroup}") { backStackEntry ->
-            val muscleGroup = backStackEntry.arguments?.getString("muscleGroup")
+        /*// Biblioteca de ejercicios
+        composable(
+            route = Screen.ExerciseLibrary.route,
+            arguments = listOf(
+                navArgument("muscleGroup") {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                }
+            )
+        ) {
+            val muscleGroup = it.arguments?.getString("muscleGroup")
             val homeViewModel: HomeViewModel = viewModel()
-            ExerciseLibraryScreen(
+            com.example.fitcoach.ui.screens.exercises.ExerciseLibraryScreen(
                 navController = navController,
                 homeViewModel = homeViewModel,
+                initialMuscle = muscleGroup
+            )
+        }*/
+
+        composable(
+            route = Screen.ExerciseLibrary.route,
+            arguments = listOf(
+                navArgument("muscleGroup") {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                }
+            )
+        ) {
+            val muscleGroup = it.arguments?.getString("muscleGroup")
+            ExerciseLibraryScreen(
+                navController = navController,
                 initialMuscle = muscleGroup
             )
         }
 
         composable(
-            route = "exercise_video/{vimeoId}/{name}"
+            route = Screen.Academy.route,
+            arguments = listOf(
+                navArgument("moduleId") {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                }
+            )
+        ) {
+            val moduleId = it.arguments?.getString("moduleId")
+            AcademyScreen(
+                navController = navController,
+                initialModuleId = moduleId,
+                viewModel = viewModel() // Pass the viewModel parameter
+            )
+        }
+
+
+        // En Navigation.kt, modificamos la composable del video:
+        /*composable(
+            route = Screen.ExerciseVideo.route,
+            arguments = listOf(
+                navArgument("vimeoId") { type = NavType.StringType },
+                navArgument("name") {
+                    type = NavType.StringType
+                    nullable = false
+                }
+            )
         ) { backStackEntry ->
-            val vimeoId = backStackEntry.arguments?.getString("vimeoId") ?: ""
-            val name = backStackEntry.arguments?.getString("name") ?: ""
+            val vimeoId = backStackEntry.arguments?.getString("vimeoId") ?: return@composable
+            val name = Uri.decode(backStackEntry.arguments?.getString("name") ?: return@composable)
+            Log.d("Navigation", "Loading video player with ID: $vimeoId, name: $name")
             ExerciseVideoPlayer(
                 vimeoId = vimeoId,
                 exerciseName = name,
                 navController = navController
             )
-        }
-
+        }*/
     }
 }
