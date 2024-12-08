@@ -57,7 +57,7 @@ class ExerciseLibraryViewModel : ViewModel() {
         // Solo inicializamos con initialMuscle si no hay un grupo muscular ya seleccionado
         if (_selectedMuscleGroup.value == null) {
             _selectedMuscleGroup.value = initialMuscle
-            initialMuscle?.let { loadExercises(it) }
+            loadExercises(initialMuscle)
         }
     }
 

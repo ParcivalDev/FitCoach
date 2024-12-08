@@ -1,6 +1,9 @@
 package com.example.fitcoach.ui.screens.exercises
 
+import android.annotation.SuppressLint
+import android.content.res.Configuration
 import android.view.ViewGroup
+import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.foundation.clickable
@@ -18,6 +21,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
@@ -42,6 +46,7 @@ private fun getVideoUrl(exercise: Exercise): String {
 }
 
 
+@SuppressLint("SetJavaScriptEnabled")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExerciseLibraryScreen(
@@ -56,6 +61,9 @@ fun ExerciseLibraryScreen(
     LaunchedEffect(initialMuscle) {
         viewModel.initialize(initialMuscle)
     }
+
+    val configuration = LocalConfiguration.current
+    val isPortrait = configuration.orientation == Configuration.ORIENTATION_PORTRAIT
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -80,7 +88,15 @@ fun ExerciseLibraryScreen(
                 )
                 HorizontalDivider()
 
-                LazyColumn {  // Reemplazamos el forEach por una LazyColumn
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = if (isPortrait) 16.dp else 24.dp),
+                    contentPadding = PaddingValues(
+                        bottom = if (isPortrait) 80.dp else 64.dp
+                    ),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
                     items(homeViewModel.exercises) { exercise ->
                         NavigationDrawerItem(
                             label = { Text(exercise.name) },
@@ -197,11 +213,11 @@ fun ExerciseLibraryScreen(
                             .clickable(onClick = { selectedExercise = null }),  // Añadimos clickable aquí también
                         contentAlignment = Alignment.Center
                     ) {
-                        val width = if (maxWidth > maxHeight) {
-                            // En modo landscape, limitamos el ancho basado en la altura
-                            (maxHeight * (16f / 9f)).coerceAtMost(maxWidth * 0.8f)
+                        val width = if (!isPortrait) {
+                            // En landscape
+                            (maxHeight * (16f/9f)).coerceAtMost(maxWidth * 0.8f)
                         } else {
-                            // En modo portrait, usamos casi todo el ancho disponible
+                            // En portrait
                             maxWidth * 0.9f
                         }
 
@@ -209,7 +225,7 @@ fun ExerciseLibraryScreen(
                             modifier = Modifier
                                 .width(width)
                                 .aspectRatio(16f / 9f)
-                                .padding(8.dp),
+                                .padding(if (isPortrait) 8.dp else 14.dp),
                             shape = RoundedCornerShape(12.dp)
                         ) {
                             Box(
@@ -224,9 +240,17 @@ fun ExerciseLibraryScreen(
                                                 ViewGroup.LayoutParams.MATCH_PARENT,
                                                 ViewGroup.LayoutParams.MATCH_PARENT
                                             )
-                                            webViewClient = WebViewClient()
+                                            webViewClient = object : WebViewClient() {
+                                                override fun shouldOverrideUrlLoading(
+                                                    view: WebView?,
+                                                    request: WebResourceRequest?
+                                                ): Boolean {
+                                                    // Solo permitir URLs de Vimeo
+                                                    return request?.url?.toString()?.startsWith("https://player.vimeo.com") != true
+                                                }
+                                            }
                                             settings.apply {
-                                                //javaScriptEnabled = true
+                                                javaScriptEnabled = true
                                                 loadWithOverviewMode = true
                                                 useWideViewPort = true
                                                 domStorageEnabled = true

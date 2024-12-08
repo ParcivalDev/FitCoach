@@ -1,17 +1,23 @@
 package com.example.fitcoach.ui.screens.academy
 
+import android.annotation.SuppressLint
+import android.content.res.Configuration
 import android.view.ViewGroup
+import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -40,7 +46,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
@@ -70,6 +78,9 @@ fun AcademyScreen(
     val selectedModuleId by viewModel.selectedModuleId.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val error by viewModel.error.collectAsState()
+
+    val configuration = LocalConfiguration.current
+    val isPortrait = configuration.orientation == Configuration.ORIENTATION_PORTRAIT
 
     val isDarkTheme = isSystemInDarkTheme()
     val backgroundColor = if (isDarkTheme) BackgroundDark else BackgroundLight
@@ -101,6 +112,7 @@ fun AcademyScreen(
                 isLoading -> {
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 }
+
                 error != null -> {
                     Text(
                         text = "Error: $error",
@@ -108,11 +120,15 @@ fun AcademyScreen(
                         modifier = Modifier.align(Alignment.Center)
                     )
                 }
+
                 selectedModuleId == null -> {
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(horizontal = 16.dp),
+                            .padding(horizontal = if (isPortrait) 16.dp else 24.dp),
+                        contentPadding = PaddingValues(
+                            bottom = if (isPortrait) 80.dp else 64.dp
+                        ),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         items(modules) { module ->
@@ -124,11 +140,15 @@ fun AcademyScreen(
                         }
                     }
                 }
+
                 else -> {
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(horizontal = 16.dp),
+                            .padding(horizontal = if (isPortrait) 16.dp else 24.dp),
+                        contentPadding = PaddingValues(
+                            bottom = if (isPortrait) 80.dp else 64.dp
+                        ),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         items(lessons) { lesson ->
@@ -151,6 +171,7 @@ fun AcademyScreen(
         }
     }
 }
+
 @Composable
 fun LessonItem(
     lesson: Lesson,
@@ -181,11 +202,15 @@ fun LessonItem(
         )
     }
 }
+
 @Composable
 private fun VideoDialog(
     lesson: Lesson,
     onDismiss: () -> Unit
 ) {
+    val configuration = LocalConfiguration.current
+    val isPortrait = configuration.orientation == Configuration.ORIENTATION_PORTRAIT
+
     Dialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(
@@ -194,15 +219,34 @@ private fun VideoDialog(
             usePlatformDefaultWidth = false
         )
     ) {
-        Card(
+        BoxWithConstraints(
             modifier = Modifier
-                .fillMaxWidth(0.95f)
-                .aspectRatio(16f/9f)
-                .padding(16.dp),
-            shape = RoundedCornerShape(16.dp)
+                .fillMaxSize()
+                .clickable(onClick = onDismiss),
+            contentAlignment = Alignment.Center
         ) {
-            Box(modifier = Modifier.fillMaxSize()) {
-                VideoPlayer(lesson)
+            val width = if (!isPortrait) {
+                // En landscape
+                (maxHeight * (16f/9f)).coerceAtMost(maxWidth * 0.8f)
+            } else {
+                // En portrait
+                maxWidth * 0.9f
+            }
+
+            Card(
+                modifier = Modifier
+                    .width(width)
+                    .aspectRatio(16f / 9f)
+                    .padding(if (isPortrait) 8.dp else 16.dp),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(16.dp))
+                ) {
+                    VideoPlayer(lesson)
+                }
             }
         }
     }
@@ -246,6 +290,7 @@ fun ModuleCard(
     }
 }
 
+@SuppressLint("SetJavaScriptEnabled")
 @Composable
 private fun VideoPlayer(lesson: Lesson) {
     AndroidView(
@@ -255,9 +300,18 @@ private fun VideoPlayer(lesson: Lesson) {
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT
                 )
-                webViewClient = WebViewClient()
+                webViewClient = object : WebViewClient() {
+                    override fun shouldOverrideUrlLoading(
+                        view: WebView?,
+                        request: WebResourceRequest?
+                    ): Boolean {
+                        // Solo permitir URLs de Vimeo
+                        return request?.url?.toString()
+                            ?.startsWith("https://player.vimeo.com") != true
+                    }
+                }
                 settings.apply {
-                    //javaScriptEnabled = true
+                    javaScriptEnabled = true
                     loadWithOverviewMode = true
                     useWideViewPort = true
                     domStorageEnabled = true
