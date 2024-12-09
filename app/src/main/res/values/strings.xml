@@ -83,4 +83,11 @@
     <string name="spotify">Spotify</string>
     <string name="youtube">YouTube</string>
     <string name="foto_de_perfil">Foto de perfil</string>
+    <string name="grupos_musculares">Grupos musculares</string>
+    <string name="icon_abrir_menu">Abrir menú</string>
+    <string name="error_al_cargar_los_ejercicios">Error al cargar los ejercicios: %1$s</string>
+    <string name="sin_ejercicios">No hay ejercicios disponibles para este grupo muscular</string>
+    <string name="buscar_ejercicio">Buscar ejercicio...</string>
+    <string name="icon_buscar">Buscar</string>
+    <string name="icon_play_ejercicio">Ver ejercicio</string>
 </resources>

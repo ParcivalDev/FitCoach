@@ -9,6 +9,7 @@ sealed class Screen(val route: String) {
     object Home : Screen("home")
     object Timer : Screen("timer")
     object Calendar : Screen("calendar")
+    object Blog : Screen("blog")
 
     object ExerciseLibrary : Screen("exercises?muscleGroup={muscleGroup}") {
         fun createRoute(muscleGroup: String? = null) =

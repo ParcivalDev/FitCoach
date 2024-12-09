@@ -2,10 +2,6 @@ package com.example.fitcoach.ui.screens.exercises
 
 import android.annotation.SuppressLint
 import android.content.res.Configuration
-import android.view.ViewGroup
-import android.webkit.WebResourceRequest
-import android.webkit.WebView
-import android.webkit.WebViewClient
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
@@ -14,117 +10,129 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.rounded.Menu
+import androidx.compose.material.icons.rounded.PlayCircle
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.example.fitcoach.R
 import com.example.fitcoach.ui.screens.home.HomeViewModel
 import com.example.fitcoach.ui.screens.home.components.CommonBottomBar
 import com.example.fitcoach.ui.theme.BackgroundDark
 import com.example.fitcoach.ui.theme.BackgroundLight
 import com.example.fitcoach.ui.theme.CardDark
 import com.example.fitcoach.ui.theme.CardLight
+import com.example.fitcoach.utils.VideoPlayer
 import kotlinx.coroutines.launch
 
-
-private fun getVideoUrl(exercise: Exercise): String {
-    return if (exercise.vimeoHash.isNotEmpty()) {
-        "https://player.vimeo.com/video/${exercise.vimeoId}?h=${exercise.vimeoHash}&badge=0&autopause=0&player_id=0&app_id=58479"
-    } else {
-        "https://player.vimeo.com/video/${exercise.vimeoId}?badge=0&autopause=0&player_id=0&app_id=58479"
-    }
-}
-
-
+// Pantalla de la biblioteca de ejercicios
+// Muestra una lista de ejercicios filtrada por grupo muscular y búsqueda
 @SuppressLint("SetJavaScriptEnabled")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExerciseLibraryScreen(
     navController: NavHostController,
     viewModel: ExerciseLibraryViewModel = viewModel(),
-    homeViewModel: HomeViewModel = viewModel(),
+    homeViewModel: HomeViewModel = viewModel(), // Necesitamos el viewmodel de Home para obtener los grupos musculares iniciales
     initialMuscle: String? = null
 ) {
+    // Ejercicio seleccionado para mostrar en un dialog
     var selectedExercise by remember { mutableStateOf<Exercise?>(null) }
+    // Texto actual de la búsqueda
     val searchQuery by viewModel.searchQuery.collectAsState()
+    // Lista de ejercicios filtrada por búsqueda
     val filteredExercises by viewModel.filteredExercises.collectAsState()
-    LaunchedEffect(initialMuscle) {
-        viewModel.initialize(initialMuscle)
-    }
 
+    // Configuración actual del dispositivo para determinar si está en modo portrait o landscape
     val configuration = LocalConfiguration.current
     val isPortrait = configuration.orientation == Configuration.ORIENTATION_PORTRAIT
 
+    // Estado del menú lateral
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    // CoroutineScope para manejar la apertura y cierre del menú
     val scope = rememberCoroutineScope()
+
+    // Determinar si el tema actual es oscuro
     val isDarkTheme = isSystemInDarkTheme()
     val backgroundColor = if (isDarkTheme) BackgroundDark else BackgroundLight
     val cardColor = if (isDarkTheme) CardDark else CardLight
 
-    val exercises by viewModel.exercises.collectAsState()
-    val selectedMuscleGroup by viewModel.selectedMuscleGroup.collectAsState()
-    val isLoading by viewModel.isLoading.collectAsState()
-    val error by viewModel.error.collectAsState()
+    val exercises by viewModel.exercises.collectAsState() // Lista de ejercicios
+    val selectedMuscleGroup by viewModel.selectedMuscleGroup.collectAsState() // Grupo muscular seleccionado
+    val isLoading by viewModel.isLoading.collectAsState() // Estado de carga
+    val error by viewModel.error.collectAsState() // Error
 
+    // Se ejecuta cuando se lanza la pantalla y al cambiar el grupo muscular seleccionado
+    LaunchedEffect(initialMuscle) {
+        viewModel.initialize(initialMuscle)
+    }
+
+    // Menú lateral con los grupos musculares
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
             ModalDrawerSheet(drawerContainerColor = backgroundColor) {
                 Spacer(modifier = Modifier.height(12.dp))
-                Text(
-                    "Grupos Musculares",
+                Text( // Título del menú
+                    stringResource(R.string.grupos_musculares),
                     style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.padding(20.dp)
                 )
                 HorizontalDivider()
 
-                LazyColumn(
+                LazyColumn( // Lista de grupos musculares
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(horizontal = if (isPortrait) 16.dp else 24.dp),
-                    contentPadding = PaddingValues(
-                        bottom = if (isPortrait) 80.dp else 64.dp
-                    ),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                        .padding(horizontal = if (isPortrait) 12.dp else 16.dp),
+                    contentPadding = PaddingValues(vertical = 10.dp), // Padding exterior
+                    verticalArrangement = Arrangement.spacedBy(8.dp) // Espacio entre elementos
                 ) {
+                    // Por cada grupo muscular, mostramos un item en la lista
                     items(homeViewModel.exercises) { exercise ->
                         NavigationDrawerItem(
-                            label = { Text(exercise.name) },
-                            selected = selectedMuscleGroup == exercise.name,
+                            label = { Text(exercise.name) }, // Nombre del grupo muscular
+                            selected = selectedMuscleGroup == exercise.name, // Si está seleccionado
+                            // Al hacer click, seleccionamos el grupo muscular y cerramos el menú
                             onClick = {
                                 viewModel.selectMuscleGroup(exercise.name)
                                 scope.launch { drawerState.close() }
                             },
-                            modifier = Modifier.padding(horizontal = 12.dp)
+                            modifier = Modifier.padding(horizontal = 10.dp)
                         )
                     }
                 }
             }
         }
     ) {
+        // Contenido principal de la pantalla con la lista de ejercicios
         Box(modifier = Modifier.fillMaxSize()) {
             Scaffold(
                 topBar = {
-                    TopAppBar(
-                        title = { Text(selectedMuscleGroup ?: "Biblioteca de Ejercicios") },
+                    TopAppBar( // Barra superior con el título y el botón para abrir el menú
+                        // El título es el grupo muscular seleccionado o "Biblioteca de Ejercicios" si no hay ninguno
+                        title = {
+                            Text(
+                                selectedMuscleGroup
+                                    ?: stringResource(R.string.biblioteca_de_ejercicios)
+                            )
+                        },
                         navigationIcon = {
                             IconButton(onClick = { scope.launch { drawerState.open() } }) {
-                                Icon(Icons.Default.Menu, "Abrir menú")
+                                Icon(Icons.Rounded.Menu, stringResource(R.string.icon_abrir_menu))
                             }
                         },
+                        // Colores de la barra superior según el tema
                         colors = TopAppBarDefaults.topAppBarColors(containerColor = cardColor)
                     )
                 },
+                // BottomBar común a todas las pantallas
                 bottomBar = { CommonBottomBar(navController, isDarkTheme, isPortrait = true) },
                 containerColor = backgroundColor
             ) { padding ->
@@ -133,41 +141,46 @@ fun ExerciseLibraryScreen(
                         .fillMaxSize()
                         .padding(padding)
                 ) {
+                    // Contenido de la pantalla según el estado de carga puede ser error, lista de ejercicios o mensaje de no hay ejercicios
                     when {
                         isLoading -> CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                         error != null -> Text(
-                            text = "Error: ${error}",
+                            text = stringResource(
+                                R.string.error_al_cargar_los_ejercicios,
+                                error.toString()
+                            ),
                             color = MaterialTheme.colorScheme.error,
                             modifier = Modifier
                                 .align(Alignment.Center)
                                 .padding(16.dp)
                         )
-
+                        // Si no hay ejercicios y hay un grupo muscular seleccionado, mostramos un mensaje
                         exercises.isEmpty() && selectedMuscleGroup != null -> Text(
-                            text = "No hay ejercicios disponibles para este grupo muscular",
+                            text = stringResource(R.string.sin_ejercicios),
                             modifier = Modifier
                                 .align(Alignment.Center)
                                 .padding(16.dp)
                         )
-
+                        //else para mostrar la lista de ejercicios y la barra de búsqueda
                         else ->
                             Column {
-                                SearchBar(
+                                SearchBar( // Barra de búsqueda
                                     query = searchQuery,
                                     onQueryChange = { viewModel.onSearchQueryChange(it) }
                                 )
+                                // Lista de ejercicios
                                 LazyColumn(
                                     modifier = Modifier
                                         .fillMaxSize()
                                         .padding(horizontal = 16.dp),
-                                    contentPadding = PaddingValues(bottom = 10.dp),
-                                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                                    contentPadding = PaddingValues(bottom = 10.dp), // Padding en la parte inferior de la lista
+                                    verticalArrangement = Arrangement.spacedBy(12.dp)
                                 ) {
-                                    items(filteredExercises) { exercise ->
+                                    items(filteredExercises) { exercise -> // Por cada ejercicio, mostramos un item en la lista
                                         ListItem(
                                             headlineContent = {
                                                 Text(
-                                                    text = exercise.name,
+                                                    text = exercise.name, // Nombre del ejercicio
                                                     style = MaterialTheme.typography.bodyLarge
                                                 )
                                             },
@@ -180,10 +193,10 @@ fun ExerciseLibraryScreen(
                                                     selectedExercise = exercise
                                                 },
                                             trailingContent = {
-                                                if (exercise.vimeoId.isNotEmpty()) {
+                                                if (exercise.vimeoId.isNotEmpty()) { // Si tiene un video, mostramos el icono de play
                                                     Icon(
-                                                        Icons.Default.PlayCircle,
-                                                        contentDescription = "Ver ejercicio",
+                                                        Icons.Rounded.PlayCircle,
+                                                        contentDescription = stringResource(R.string.icon_play_ejercicio),
                                                         tint = MaterialTheme.colorScheme.primary,
                                                         modifier = Modifier.size(32.dp)
                                                     )
@@ -197,140 +210,37 @@ fun ExerciseLibraryScreen(
                 }
             }
 
+            // Dialog para mostrar el video del ejercicio seleccionado
             if (selectedExercise != null) {
-                Dialog(
-                    onDismissRequest = { selectedExercise = null },
-                    properties = DialogProperties(
-                        dismissOnBackPress = true,
-                        dismissOnClickOutside = true,  // Esto asegura que se pueda cerrar al tocar fuera
-                        usePlatformDefaultWidth = false,
-                        decorFitsSystemWindows = false  // Esto asegura que el dialog se ajuste correctamente
-                    )
-                ) {
-                    BoxWithConstraints(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clickable(onClick = { selectedExercise = null }),  // Añadimos clickable aquí también
-                        contentAlignment = Alignment.Center
-                    ) {
-                        val width = if (!isPortrait) {
-                            // En landscape
-                            (maxHeight * (16f/9f)).coerceAtMost(maxWidth * 0.8f)
-                        } else {
-                            // En portrait
-                            maxWidth * 0.9f
-                        }
-
-                        Card(
-                            modifier = Modifier
-                                .width(width)
-                                .aspectRatio(16f / 9f)
-                                .padding(if (isPortrait) 8.dp else 14.dp),
-                            shape = RoundedCornerShape(12.dp)
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .clip(RoundedCornerShape(16.dp))
-                            ) {
-                                AndroidView(
-                                    factory = { context ->
-                                        WebView(context).apply {
-                                            layoutParams = ViewGroup.LayoutParams(
-                                                ViewGroup.LayoutParams.MATCH_PARENT,
-                                                ViewGroup.LayoutParams.MATCH_PARENT
-                                            )
-                                            webViewClient = object : WebViewClient() {
-                                                override fun shouldOverrideUrlLoading(
-                                                    view: WebView?,
-                                                    request: WebResourceRequest?
-                                                ): Boolean {
-                                                    // Solo permitir URLs de Vimeo
-                                                    return request?.url?.toString()?.startsWith("https://player.vimeo.com") != true
-                                                }
-                                            }
-                                            settings.apply {
-                                                javaScriptEnabled = true
-                                                loadWithOverviewMode = true
-                                                useWideViewPort = true
-                                                domStorageEnabled = true
-                                                allowContentAccess = true
-                                                allowFileAccess = true
-                                                mediaPlaybackRequiresUserGesture = false
-                                                setSupportMultipleWindows(true)
-                                            }
-
-                                            val html = """
-                                        <html>
-                                            <head>
-                                                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                                                <style>
-                                                    body, html { 
-                                                        margin: 0; 
-                                                        padding: 0; 
-                                                        width: 100%; 
-                                                        height: 100%; 
-                                                        background-color: black;
-                                                    }
-                                                    iframe {
-                                                        position: absolute;
-                                                        top: 0;
-                                                        left: 0;
-                                                        width: 100%;
-                                                        height: 100%;
-                                                        border: none;
-                                                    }
-                                                </style>
-                                            </head>
-                                            <body>
-                                                <iframe 
-                                                    src="${getVideoUrl(selectedExercise!!)}"
-                                                    frameborder="0" 
-                                                    allow="autoplay; fullscreen; picture-in-picture"
-                                                    allowfullscreen 
-                                                    style="position:absolute;top:0;left:0;width:100%;height:100%;">
-                                                </iframe>
-                                            </body>
-                                        </html>
-                                        """.trimIndent()
-
-                                            loadDataWithBaseURL(
-                                                "https://player.vimeo.com",
-                                                html,
-                                                "text/html",
-                                                "UTF-8",
-                                                null
-                                            )
-                                        }
-                                    },
-                                    modifier = Modifier.fillMaxSize()
-                                )
-                            }
-                        }
-                    }
-                }
+                VideoPlayer(
+                    videoId = selectedExercise!!.vimeoId,
+                    videoHash = selectedExercise!!.vimeoHash,
+                    onDismiss = { selectedExercise = null }
+                )
             }
         }
     }
 }
 
+
+// Barra de búsqueda para filtrar los ejercicios
 @Composable
 fun SearchBar(
     query: String,
     onQueryChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    OutlinedTextField(
+    OutlinedTextField( // TextField con el icono de búsqueda
         value = query,
         onValueChange = onQueryChange,
         modifier = modifier
             .fillMaxWidth()
             .padding(16.dp),
-        placeholder = { Text("Buscar ejercicio...") },
+        placeholder = { Text(stringResource(R.string.buscar_ejercicio)) },
         leadingIcon = {
             Icon(
                 Icons.Default.Search,
-                contentDescription = "Buscar"
+                contentDescription = stringResource(R.string.icon_buscar)
             )
         },
         singleLine = true,

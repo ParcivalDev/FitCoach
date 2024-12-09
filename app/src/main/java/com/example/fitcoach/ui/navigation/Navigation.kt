@@ -12,6 +12,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.fitcoach.ui.screens.academy.AcademyScreen
+import com.example.fitcoach.ui.screens.blog.BlogScreen
 import com.example.fitcoach.ui.screens.calendar.CalendarScreen
 import com.example.fitcoach.ui.screens.calendar.CalendarViewModel
 import com.example.fitcoach.ui.screens.exercises.ExerciseLibraryScreen
@@ -154,6 +155,9 @@ fun Navigation() {
                 initialModuleId = moduleId,
                 viewModel = viewModel() // Pass the viewModel parameter
             )
+        }
+        composable(Screen.Blog.route) {
+            BlogScreen(navController = navController)
         }
 
 

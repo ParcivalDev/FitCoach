@@ -45,8 +45,6 @@ class HomeViewModel : ViewModel() {
     var showContactDialog by mutableStateOf(false)
         private set
 
-    var hasNotifications by mutableStateOf(false)
-        private set
 
     var showUnderDevelopmentDialog by mutableStateOf(false)
         private set
@@ -88,26 +86,6 @@ class HomeViewModel : ViewModel() {
         // TODO: Navegación al perfil
     }
 
-    fun onNotificationsClick() {
-        // TODO: Abrir notificaciones
-    }
-
-    fun onBlogClick() {
-        // TODO: Implementar navegación al blog
-    }
-
-    fun onExerciseClick(exercise: ExerciseCategory, onNavigate: (String) -> Unit) {
-        onNavigate("exercises?muscleGroup=${exercise.name}")
-    }
-
-    fun onCategoryClick(category: Category, onNavigate: (String) -> Unit) {
-        when (category.name) {
-            "Entrenamiento" -> onNavigate("training")
-            "Academia" -> onNavigate("academy")
-            "Progreso" -> onNavigate("progress")
-            "Tienda" -> onNavigate("store")
-        }
-    }
 
     // Abre el enlace a la red social correspondiente
     fun onSocialClick(network: String, context: Context) {

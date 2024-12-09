@@ -1,26 +1,17 @@
 package com.example.fitcoach.ui.screens.academy
 
-import android.annotation.SuppressLint
 import android.content.res.Configuration
-import android.view.ViewGroup
-import android.webkit.WebResourceRequest
-import android.webkit.WebView
-import android.webkit.WebViewClient
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.rounded.PlayCircle
@@ -46,19 +37,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavHostController
 import com.example.fitcoach.ui.screens.home.components.CommonBottomBar
 import com.example.fitcoach.ui.theme.BackgroundDark
 import com.example.fitcoach.ui.theme.BackgroundLight
 import com.example.fitcoach.ui.theme.CardDark
 import com.example.fitcoach.ui.theme.CardLight
+import com.example.fitcoach.utils.VideoPlayer
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -146,9 +134,7 @@ fun AcademyScreen(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(horizontal = if (isPortrait) 16.dp else 24.dp),
-                        contentPadding = PaddingValues(
-                            bottom = if (isPortrait) 80.dp else 64.dp
-                        ),
+                        contentPadding = PaddingValues(vertical = 10.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         items(lessons) { lesson ->
@@ -163,8 +149,9 @@ fun AcademyScreen(
             }
 
             if (selectedLesson != null) {
-                VideoDialog(
-                    lesson = selectedLesson!!,
+                VideoPlayer(
+                    videoId = selectedLesson!!.vimeoId,
+                    videoHash = selectedLesson!!.vimeoHash,
                     onDismiss = { selectedLesson = null }
                 )
             }
@@ -204,55 +191,6 @@ fun LessonItem(
 }
 
 @Composable
-private fun VideoDialog(
-    lesson: Lesson,
-    onDismiss: () -> Unit
-) {
-    val configuration = LocalConfiguration.current
-    val isPortrait = configuration.orientation == Configuration.ORIENTATION_PORTRAIT
-
-    Dialog(
-        onDismissRequest = onDismiss,
-        properties = DialogProperties(
-            dismissOnBackPress = true,
-            dismissOnClickOutside = true,
-            usePlatformDefaultWidth = false
-        )
-    ) {
-        BoxWithConstraints(
-            modifier = Modifier
-                .fillMaxSize()
-                .clickable(onClick = onDismiss),
-            contentAlignment = Alignment.Center
-        ) {
-            val width = if (!isPortrait) {
-                // En landscape
-                (maxHeight * (16f/9f)).coerceAtMost(maxWidth * 0.8f)
-            } else {
-                // En portrait
-                maxWidth * 0.9f
-            }
-
-            Card(
-                modifier = Modifier
-                    .width(width)
-                    .aspectRatio(16f / 9f)
-                    .padding(if (isPortrait) 8.dp else 16.dp),
-                shape = RoundedCornerShape(16.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clip(RoundedCornerShape(16.dp))
-                ) {
-                    VideoPlayer(lesson)
-                }
-            }
-        }
-    }
-}
-
-@Composable
 fun ModuleCard(
     module: Module,
     onClick: () -> Unit,
@@ -288,87 +226,4 @@ fun ModuleCard(
             }
         )
     }
-}
-
-@SuppressLint("SetJavaScriptEnabled")
-@Composable
-private fun VideoPlayer(lesson: Lesson) {
-    AndroidView(
-        factory = { context ->
-            WebView(context).apply {
-                layoutParams = ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT
-                )
-                webViewClient = object : WebViewClient() {
-                    override fun shouldOverrideUrlLoading(
-                        view: WebView?,
-                        request: WebResourceRequest?
-                    ): Boolean {
-                        // Solo permitir URLs de Vimeo
-                        return request?.url?.toString()
-                            ?.startsWith("https://player.vimeo.com") != true
-                    }
-                }
-                settings.apply {
-                    javaScriptEnabled = true
-                    loadWithOverviewMode = true
-                    useWideViewPort = true
-                    domStorageEnabled = true
-                    allowContentAccess = true
-                    allowFileAccess = true
-                    mediaPlaybackRequiresUserGesture = false
-                    setSupportMultipleWindows(true)
-                }
-
-                val videoUrl = if (lesson.vimeoHash.isNotEmpty()) {
-                    "https://player.vimeo.com/video/${lesson.vimeoId}?h=${lesson.vimeoHash}&badge=0&autopause=0&player_id=0&app_id=58479"
-                } else {
-                    "https://player.vimeo.com/video/${lesson.vimeoId}?badge=0&autopause=0&player_id=0&app_id=58479"
-                }
-
-                val html = """
-                    <html>
-                        <head>
-                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                            <style>
-                                body, html { 
-                                    margin: 0; 
-                                    padding: 0; 
-                                    width: 100%; 
-                                    height: 100%; 
-                                    background-color: black;
-                                }
-                                iframe {
-                                    position: absolute;
-                                    top: 0;
-                                    left: 0;
-                                    width: 100%;
-                                    height: 100%;
-                                    border: none;
-                                }
-                            </style>
-                        </head>
-                        <body>
-                            <iframe 
-                                src="$videoUrl"
-                                frameborder="0" 
-                                allow="autoplay; fullscreen; picture-in-picture"
-                                allowfullscreen>
-                            </iframe>
-                        </body>
-                    </html>
-                """.trimIndent()
-
-                loadDataWithBaseURL(
-                    "https://player.vimeo.com",
-                    html,
-                    "text/html",
-                    "UTF-8",
-                    null
-                )
-            }
-        },
-        modifier = Modifier.fillMaxSize()
-    )
 }

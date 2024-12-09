@@ -167,8 +167,7 @@ fun HomeScreen(navController: NavHostController, vm: HomeViewModel = viewModel()
                     LatestNews(
                         blogPost = vm.blogPost,
                         cardColor = cardColor,
-                        /*onBlogClick = { vm.onBlogClick() },*/
-                        onBlogClick = { vm.showDevelopmentDialog() },
+                        onBlogClick = { navController.navigate(Screen.Blog.route) },
                         isPortrait = isPortrait
                     )
                 }
