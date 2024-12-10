@@ -21,14 +21,7 @@ class TimerViewModel : ViewModel() {
     // Estado del temporizador accesible desde otras clases
     val timerState: StateFlow<TimerState> = _timerState.asStateFlow()
 
-    // Define el estado inicial del temporizador
-    data class TimerState(
-        val hours: Int = 0,
-        val minutes: Int = 2,
-        val seconds: Int = 0,
-        val isActive: Boolean = false,
-        val totalSeconds: Int = 120
-    )
+
 
     // Se inicializa el servicio de notificaciones
     fun initialize(context: Context) {
@@ -48,22 +41,20 @@ class TimerViewModel : ViewModel() {
     private fun startTimer(context: Context) {
         // Si el temporizador tiene tiempo restante y no está activo
         if (_timerState.value.totalSeconds > 0 && !_timerState.value.isActive) {
-            // Se activa el temporizador
+            // Se activa el temporizador manteniendo el tiempo actual
             _timerState.value = _timerState.value.copy(isActive = true)
 
-            // Se inicia la tarea del temporizador
+            // Se inicia la tarea del temporizador desde el tiempo actual
             timerJob = viewModelScope.launch {
-                var remaining = _timerState.value.totalSeconds
+                var remaining = _timerState.value.totalSeconds  // Usamos el tiempo que teníamos
                 while (remaining > 0 && _timerState.value.isActive) {
                     delay(1000)
                     remaining--
 
-                    // Se actualiza el tiempo restante
                     val hours = remaining / 3600
                     val minutes = (remaining % 3600) / 60
                     val seconds = remaining % 60
 
-                    // Se actualiza el estado del temporizador con el nuevo tiempo
                     _timerState.value = _timerState.value.copy(
                         hours = hours,
                         minutes = minutes,
@@ -71,7 +62,6 @@ class TimerViewModel : ViewModel() {
                         totalSeconds = remaining
                     )
                 }
-                // Si el tiempo restante es 0, se muestra la notificación y se reinicia el temporizador
                 if (remaining == 0) {
                     NotificationService.timerNotification(context)
                     resetTimer()
@@ -82,9 +72,11 @@ class TimerViewModel : ViewModel() {
 
     // Pausa el temporizador
     private fun pauseTimer() {
-        // Marca como inactivo el temporizador y cancela la cuenta atrás
-        _timerState.value = _timerState.value.copy(isActive = false)
+        // Solo cancelamos el Job y marcamos como inactivo, manteniendo el tiempo actual
         timerJob?.cancel()
+        _timerState.value = _timerState.value.copy(
+            isActive = false
+        )
     }
 
     // Reinicia el temporizador

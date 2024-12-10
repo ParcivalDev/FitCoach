@@ -40,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.fitcoach.ui.screens.home.components.CommonBottomBar
 import com.example.fitcoach.ui.theme.BackgroundDark
@@ -77,7 +78,15 @@ fun AcademyScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(selectedModuleId?.let { "Módulo" } ?: "Academia") },
+                title = {
+                    Text(
+                        text = selectedModuleId?.let {
+                            modules.find { it.id == selectedModuleId }?.name
+                        } ?: "Academia",
+                        fontSize = if (isPortrait) 18.sp else 20.sp
+                    )
+                },
+
                 navigationIcon = {
                     if (selectedModuleId != null) {
                         IconButton(onClick = { viewModel.clearSelectedModule() }) {

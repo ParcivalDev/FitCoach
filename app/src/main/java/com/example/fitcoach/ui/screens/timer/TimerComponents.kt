@@ -247,7 +247,7 @@ fun TimerControls(isActive: Boolean, onToggle: () -> Unit, onReset: () -> Unit) 
 
 // Botones de selección rápida
 @Composable
-fun BotonSeleccionTiempo(
+fun BtnSelecTiempo(
     texto: String,
     onClick: () -> Unit,
     isDarkTheme: Boolean
@@ -259,8 +259,8 @@ fun BotonSeleccionTiempo(
         ),
         shape = RoundedCornerShape(18.dp),
         modifier = Modifier
-            .height(50.dp)
-            .width(90.dp),
+            .height(70.dp)
+            .width(100.dp),
         contentPadding = PaddingValues(0.dp)
     ) {
         Text(

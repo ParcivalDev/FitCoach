@@ -10,6 +10,20 @@ data class WorkoutNoteData(
     val rating: String = ""   // Rating como texto (GOOD, BAD, etc)
 )
 
+data class WorkoutNote(
+    val note: String,
+    val rating: WorkoutRating
+)
+
+enum class WorkoutRating(val emoji: String) {
+    EXCELLENT("🔥"),
+    GOOD("👍"),
+    OKAY("😐"),
+    TIRED("🪫"),
+    BAD("👎"),
+    TERRIBLE("🤒")
+}
+
 // Estados de la nota
 sealed class CalendarResult<out T> {
     data class Success<T>(val data: T) : CalendarResult<T>()

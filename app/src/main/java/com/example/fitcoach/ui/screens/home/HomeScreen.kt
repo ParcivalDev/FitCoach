@@ -16,10 +16,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.fitcoach.ui.navigation.Screen
+import com.example.fitcoach.ui.screens.home.components.Blog
 import com.example.fitcoach.ui.screens.home.components.CommonBottomBar
 import com.example.fitcoach.ui.screens.home.components.DrawerContent
 import com.example.fitcoach.ui.screens.home.components.ExerciseLibrary
-import com.example.fitcoach.ui.screens.home.components.LatestNews
 import com.example.fitcoach.ui.screens.home.components.OtherCategories
 import com.example.fitcoach.ui.screens.home.components.TopAppBarHome
 import com.example.fitcoach.ui.screens.home.components.WelcomeMessage
@@ -164,7 +164,7 @@ fun HomeScreen(navController: NavHostController, vm: HomeViewModel = viewModel()
                 }
                 // Mostrar las últimas noticias
                 item {
-                    LatestNews(
+                    Blog(
                         blogPost = vm.blogPost,
                         cardColor = cardColor,
                         onBlogClick = { navController.navigate(Screen.Blog.route) },

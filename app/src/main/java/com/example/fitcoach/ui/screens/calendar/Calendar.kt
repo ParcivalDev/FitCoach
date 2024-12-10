@@ -302,13 +302,15 @@ fun NoteCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Row(
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.weight(1f)
             ) {
                 Text(text = note.rating.emoji,
                     style = MaterialTheme.typography.titleLarge)
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(text = note.note)
             }
+
 
             IconButton(
                 onClick = onDeleteClick
@@ -426,17 +428,5 @@ private fun getDaysInMonth(yearMonth: YearMonth): List<LocalDate?> {
     }
 }
 
-data class WorkoutNote(
-    val note: String,
-    val rating: WorkoutRating
-)
 
-enum class WorkoutRating(val emoji: String) {
-    EXCELLENT("🔥"),
-    GOOD("👍"),
-    OKAY("😐"),
-    TIRED("🪫"),
-    BAD("👎"),
-    TERRIBLE("🤒")
-}
 

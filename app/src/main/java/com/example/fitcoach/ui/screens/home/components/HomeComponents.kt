@@ -299,7 +299,7 @@ fun CategoryItem(
 
 // Función para mostrar el blog
 @Composable
-fun LatestNews(
+fun Blog(
     blogPost: BlogPost,
     cardColor: Color,
     onBlogClick: () -> Unit,

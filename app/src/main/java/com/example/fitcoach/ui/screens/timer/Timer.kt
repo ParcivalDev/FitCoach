@@ -132,7 +132,7 @@ fun TimerScreen(
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
                     // Botón para seleccionar 1 minuto y 30 segundos
-                    BotonSeleccionTiempo(
+                    BtnSelecTiempo(
                         texto = stringResource(R.string.min_y_medio),
                         onClick = {
                             timerViewModel.updateTime(hours = 0, minutes = 1, seconds = 30)
@@ -140,7 +140,7 @@ fun TimerScreen(
                         },
                         isSystemInDarkTheme()
                     )
-                    BotonSeleccionTiempo(
+                    BtnSelecTiempo(
                         texto = stringResource(R.string.tres_min),
                         onClick = {
                             timerViewModel.updateTime(hours = 0, minutes = 3, seconds = 0)
@@ -164,6 +164,15 @@ fun TimerScreen(
         }
     }
 }
+
+// Define el estado inicial del temporizador
+data class TimerState(
+    val hours: Int = 0,
+    val minutes: Int = 2,
+    val seconds: Int = 0,
+    val isActive: Boolean = false,
+    val totalSeconds: Int = 120
+)
 
 // Función para solicitar permisos en Android 13 y superiores
 @Composable

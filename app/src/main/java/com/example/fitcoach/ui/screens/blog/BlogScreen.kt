@@ -181,7 +181,7 @@ fun BlogArticleCard(
             )
 
             Text(
-                text = article.excerpt,
+                text = article.text,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
                 maxLines = 3,
