@@ -73,7 +73,7 @@ fun BlogScreen(
                 items(categories) { category ->
                     CategoryChip(
                         category = category,
-                        selected = selectedCategory == category,
+                        selected = if (category == "Todos") selectedCategory == null else selectedCategory == category,
                         onClick = {
                             viewModel.selectCategory(if (category == "Todos") null else category)
                         }
