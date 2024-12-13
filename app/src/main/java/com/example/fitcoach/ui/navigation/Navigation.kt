@@ -101,27 +101,6 @@ fun Navigation() {
             )
         }
 
-
-        /*// Biblioteca de ejercicios
-        composable(
-            route = Screen.ExerciseLibrary.route,
-            arguments = listOf(
-                navArgument("muscleGroup") {
-                    type = NavType.StringType
-                    nullable = true
-                    defaultValue = null
-                }
-            )
-        ) {
-            val muscleGroup = it.arguments?.getString("muscleGroup")
-            val homeViewModel: HomeViewModel = viewModel()
-            com.example.fitcoach.ui.screens.exercises.ExerciseLibraryScreen(
-                navController = navController,
-                homeViewModel = homeViewModel,
-                initialMuscle = muscleGroup
-            )
-        }*/
-
         composable(
             route = Screen.ExerciseLibrary.route,
             arguments = listOf(
@@ -159,27 +138,5 @@ fun Navigation() {
         composable(Screen.Blog.route) {
             BlogScreen(navController = navController)
         }
-
-
-        // En Navigation.kt, modificamos la composable del video:
-        /*composable(
-            route = Screen.ExerciseVideo.route,
-            arguments = listOf(
-                navArgument("vimeoId") { type = NavType.StringType },
-                navArgument("name") {
-                    type = NavType.StringType
-                    nullable = false
-                }
-            )
-        ) { backStackEntry ->
-            val vimeoId = backStackEntry.arguments?.getString("vimeoId") ?: return@composable
-            val name = Uri.decode(backStackEntry.arguments?.getString("name") ?: return@composable)
-            Log.d("Navigation", "Loading video player with ID: $vimeoId, name: $name")
-            ExerciseVideoPlayer(
-                vimeoId = vimeoId,
-                exerciseName = name,
-                navController = navController
-            )
-        }*/
     }
 }

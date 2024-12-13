@@ -4,7 +4,7 @@ import androidx.compose.ui.graphics.Color
 
 
 // Colores personalizados
-val BackgroundLight = Color(0xFFF5F5F5)
+val BackgroundLight = Color(0xFFDFDFDF)
 val BackgroundDark = Color(0xFF030B1B)
 val DarkBlueLight = Color(0xFF484f69)
 val DarkBlueDark = Color(0xFF1A2234)

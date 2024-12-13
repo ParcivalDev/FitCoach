@@ -90,4 +90,13 @@
     <string name="buscar_ejercicio">Buscar ejercicio...</string>
     <string name="icon_buscar">Buscar</string>
     <string name="icon_play_ejercicio">Ver ejercicio</string>
+    <string name="blog">Blog</string>
+    <string name="icon_back">Volver</string>
+    <string name="suplementos">Suplementos</string>
+    <string name="salud">Salud</string>
+    <string name="lesiones">Lesiones</string>
+    <string name="recomp_corporal">Recomposición corporal</string>
+    <string name="hipertrofia">Hipertrofia</string>
+    <string name="todos">Todos</string>
+    <string name="leer_mas">Leer más</string>
 </resources>

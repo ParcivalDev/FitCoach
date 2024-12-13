@@ -4,6 +4,8 @@ import android.content.res.Configuration
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.Chat
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -16,6 +18,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.fitcoach.ui.navigation.Screen
+import com.example.fitcoach.ui.screens.chat.ChatDialog
 import com.example.fitcoach.ui.screens.home.components.Blog
 import com.example.fitcoach.ui.screens.home.components.CommonBottomBar
 import com.example.fitcoach.ui.screens.home.components.DrawerContent
@@ -23,6 +26,7 @@ import com.example.fitcoach.ui.screens.home.components.ExerciseLibrary
 import com.example.fitcoach.ui.screens.home.components.OtherCategories
 import com.example.fitcoach.ui.screens.home.components.TopAppBarHome
 import com.example.fitcoach.ui.screens.home.components.WelcomeMessage
+import com.example.fitcoach.ui.theme.AccentOrange
 import com.example.fitcoach.ui.theme.BackgroundDark
 import com.example.fitcoach.ui.theme.BackgroundLight
 import com.example.fitcoach.ui.theme.CardDark
@@ -74,6 +78,13 @@ fun HomeScreen(navController: NavHostController, vm: HomeViewModel = viewModel()
         UnderDevelopmentDialog(onDismiss = vm::dismissDevelopmentDialog)
     }
 
+    if (vm.showChat) {
+        ChatDialog(
+            onDismiss = { vm.dismissChatDialog() }
+        )
+    }
+
+
     // Pantalla principal
     // Muestra el cajón de navegación y el contenido principal
     ModalNavigationDrawer(
@@ -83,8 +94,8 @@ fun HomeScreen(navController: NavHostController, vm: HomeViewModel = viewModel()
                 userName = vm.userName,
                 backgroundColor = backgroundColor,
                 drawerState = drawerState,
-                onProfileClick = { vm.onProfileClick() },
-                onSettingsClick = { /*vm.onSettingsClick()*/ vm.showDevelopmentDialog() },
+                onProfileClick = { vm.showDevelopmentDialog() },
+                onSettingsClick = { vm.showDevelopmentDialog() },
                 onSocialClick = { network -> vm.onSocialClick(network, context) },
                 onShowContactDialog = { vm.onShowContactDialog() },
                 onLogoutClick = { // Cerrar sesión
@@ -112,6 +123,19 @@ fun HomeScreen(navController: NavHostController, vm: HomeViewModel = viewModel()
                     isPortrait = isPortrait
                 )
             },
+            floatingActionButton = {
+                FloatingActionButton(
+                    onClick = { vm.showChatDialog() },
+                    containerColor = AccentOrange,
+                    contentColor = Color.White
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Rounded.Chat,
+                        contentDescription = "Abrir chat"
+                    )
+                }
+            },
+            floatingActionButtonPosition = FabPosition.End,
             bottomBar = { CommonBottomBar(navController, isDarkTheme, isPortrait) },
             containerColor = backgroundColor
         ) { paddingValues ->

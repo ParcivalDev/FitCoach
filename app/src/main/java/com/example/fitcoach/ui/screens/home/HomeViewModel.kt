@@ -24,6 +24,21 @@ class HomeViewModel : ViewModel() {
     private val db: FirebaseFirestore = FirebaseFirestore.getInstance()
     private lateinit var sharedPreferences: SharedPreferences
 
+
+
+    var showChat by mutableStateOf(false)
+        private set
+
+    fun showChatDialog() {
+        showChat = true
+    }
+
+    fun dismissChatDialog() {
+        showChat = false
+    }
+
+
+
     // Inicializa el archivo de preferencias compartidas
     fun initSharedPreferences(context: Context) {
         // Abre el mismo archivo "login_prefs" que tiene LoginViewModel
@@ -79,11 +94,6 @@ class HomeViewModel : ViewModel() {
             Category("Progreso", R.drawable.progreso_img),
             Category("Tienda", R.drawable.tienda_img)
         )
-    }
-
-    // Funciones para manejar eventos de UI
-    fun onProfileClick() {
-        // TODO: Navegación al perfil
     }
 
 
