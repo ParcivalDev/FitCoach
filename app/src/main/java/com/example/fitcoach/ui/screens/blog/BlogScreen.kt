@@ -1,9 +1,7 @@
 package com.example.fitcoach.ui.screens.blog
 
 import android.content.Intent
-import android.content.res.Configuration
 import android.net.Uri
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
@@ -19,13 +17,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.fitcoach.R
@@ -52,40 +47,15 @@ fun BlogScreen(
     val selectedCategory by viewModel.selectedCategory.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
 
-
-
     Scaffold( // Barra superior y barra inferior
         topBar = {
             TopAppBar(
-                title = {
-                    Box(modifier = Modifier.fillMaxWidth()) {
-                        // Botón atrás
-                        IconButton(
-                            onClick = { navController.popBackStack() },
-                            modifier = Modifier.align(Alignment.CenterStart)
-                        ) {
-                            Icon(
-                                Icons.AutoMirrored.Filled.ArrowBack,
-                                stringResource(R.string.icon_back)
-                            )
-                        }
-
-                        // Texto Blog a la izquierda, después del botón
-                        Text(
-                            text = stringResource(R.string.blog),
-                            modifier = Modifier
-                                .align(Alignment.CenterStart)
-                                .padding(start = 48.dp),
-                            fontSize = 20.sp
-                        )
-
-                        // Logo centrado
-                        Image(
-                            painter = painterResource(id = R.drawable.logo_app),
-                            contentDescription = stringResource(R.string.sm_logo),
-                            modifier = Modifier
-                                .size(50.dp)
-                                .align(Alignment.Center)
+                title = { Text(stringResource(R.string.blog)) },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            stringResource(R.string.icon_back)
                         )
                     }
                 },

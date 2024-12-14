@@ -99,4 +99,17 @@
     <string name="hipertrofia">Hipertrofia</string>
     <string name="todos">Todos</string>
     <string name="leer_mas">Leer más</string>
+    <string name="icon_ver_leccion">Ver lección</string>
+    <string name="lecciones">%1$s lecciones</string>
+    <string name="limpiar_chat">Limpiar chat</string>
+    <string name="asistente_fitcoach">Asistente FitCoach</string>
+    <string name="que_ejercicios_hay">¿Qué ejercicios hay?</string>
+    <string name="como_funciona_el_temporizador">¿Cómo funciona el temporizador?</string>
+    <string name="que_es_la_academia">¿Qué es la Academia?</string>
+    <string name="como_usar_calendario">¿Para que es el calendario?</string>
+    <string name="que_hay_en_el_blog">¿Qué puedo encontrar en el blog?</string>
+    <string name="necesito_ayuda">Necesito ayuda</string>
+    <string name="escribe_un_mensaje">Escribe un mensaje…</string>
+    <string name="icon_enviar">Enviar</string>
+    <string name="msj_bienvenida_chat">¡Hola! Soy el asistente de FitCoach. Puedo ayudarte a conocer mejor la app y resolver tus dudas sobre cualquier sección. ¿Qué te gustaría saber?</string>
 </resources>

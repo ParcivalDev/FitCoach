@@ -118,21 +118,10 @@ fun Navigation() {
             )
         }
 
-        composable(
-            route = Screen.Academy.route,
-            arguments = listOf(
-                navArgument("moduleId") {
-                    type = NavType.StringType
-                    nullable = true
-                    defaultValue = null
-                }
-            )
-        ) {
-            val moduleId = it.arguments?.getString("moduleId")
+        composable(Screen.Academy.route) {
             AcademyScreen(
                 navController = navController,
-                initialModuleId = moduleId,
-                viewModel = viewModel() // Pass the viewModel parameter
+                viewModel = viewModel()
             )
         }
         composable(Screen.Blog.route) {

@@ -29,7 +29,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -39,9 +38,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.fitcoach.R
 import com.example.fitcoach.ui.screens.home.components.CommonBottomBar
 import com.example.fitcoach.ui.theme.BackgroundDark
 import com.example.fitcoach.ui.theme.BackgroundLight
@@ -49,18 +50,16 @@ import com.example.fitcoach.ui.theme.CardDark
 import com.example.fitcoach.ui.theme.CardLight
 import com.example.fitcoach.utils.VideoPlayer
 
+// Pantalla de la academia
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AcademyScreen(
     navController: NavHostController,
-    viewModel: AcademyViewModel,
-    initialModuleId: String? = null
+    viewModel: AcademyViewModel
 ) {
+    // Lección seleccionada
     var selectedLesson by remember { mutableStateOf<Lesson?>(null) }
 
-    LaunchedEffect(initialModuleId) {
-        viewModel.initialize(initialModuleId)
-    }
 
     val modules by viewModel.modules.collectAsState()
     val lessons by viewModel.lessons.collectAsState()
@@ -68,13 +67,14 @@ fun AcademyScreen(
     val isLoading by viewModel.isLoading.collectAsState()
     val error by viewModel.error.collectAsState()
 
+    // Configuración de la pantalla y tema
     val configuration = LocalConfiguration.current
     val isPortrait = configuration.orientation == Configuration.ORIENTATION_PORTRAIT
-
     val isDarkTheme = isSystemInDarkTheme()
     val backgroundColor = if (isDarkTheme) BackgroundDark else BackgroundLight
     val cardColor = if (isDarkTheme) CardDark else CardLight
 
+    // Estructura de la pantalla
     Scaffold(
         topBar = {
             TopAppBar(
@@ -92,7 +92,7 @@ fun AcademyScreen(
                         IconButton(onClick = { viewModel.clearSelectedModule() }) {
                             Icon(Icons.AutoMirrored.Rounded.ArrowBack, "Volver")
                         }
-                    }else{
+                    } else {
                         IconButton(onClick = { navController.popBackStack() }) {
                             Icon(Icons.AutoMirrored.Rounded.ArrowBack, "Volver")
                         }
@@ -104,16 +104,19 @@ fun AcademyScreen(
         bottomBar = { CommonBottomBar(navController, isDarkTheme, isPortrait = true) },
         containerColor = backgroundColor
     ) { padding ->
+        // Contenido de la pantalla
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
         ) {
+            // Muestra un indicador de carga, un mensaje de error o la lista de módulos o lecciones
             when {
                 isLoading -> {
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 }
 
+                // Muestra un mensaje de error
                 error != null -> {
                     Text(
                         text = "Error: $error",
@@ -122,6 +125,7 @@ fun AcademyScreen(
                     )
                 }
 
+                // Muestra la lista de módulos si no hay ninguno seleccionado
                 selectedModuleId == null -> {
                     LazyColumn(
                         modifier = Modifier
@@ -133,7 +137,7 @@ fun AcademyScreen(
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         items(modules) { module ->
-                            ModuleCard(
+                            ModuleCard( // Muestra un módulo
                                 module = module,
                                 onClick = { viewModel.selectModule(module.id) },
                                 cardColor = cardColor
@@ -142,6 +146,7 @@ fun AcademyScreen(
                     }
                 }
 
+                // Muestra la lista de lecciones si hay un módulo seleccionado
                 else -> {
                     LazyColumn(
                         modifier = Modifier
@@ -161,6 +166,7 @@ fun AcademyScreen(
                 }
             }
 
+            // Muestra el reproductor de video si hay una lección seleccionada
             if (selectedLesson != null) {
                 VideoPlayer(
                     videoId = selectedLesson!!.vimeoId,
@@ -172,30 +178,32 @@ fun AcademyScreen(
     }
 }
 
+// Función que muestra una lección
 @Composable
 fun LessonItem(
-    lesson: Lesson,
+    lesson: Lesson, // Datos de la lección
     cardColor: Color,
-    onClick: () -> Unit
+    onClick: () -> Unit // Función que se ejecuta al hacer clic en la lección  (muestra el video)
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp)
+            .padding(vertical = 4.dp) // Espaciado vertical entre lecciones
             .clickable(onClick = onClick)
     ) {
         ListItem(
             headlineContent = {
-                Text(text = lesson.name)
+                Text(text = lesson.name) // Título de la lección
             },
             colors = ListItemDefaults.colors(
                 containerColor = cardColor
             ),
             trailingContent = {
+                // Muestra un icono de reproducción si la lección tiene un video
                 if (lesson.vimeoId.isNotEmpty()) {
                     Icon(
                         imageVector = Icons.Rounded.PlayCircle,
-                        contentDescription = "Ver lección",
+                        contentDescription = stringResource(R.string.icon_ver_leccion),
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(24.dp)
                     )
@@ -205,9 +213,10 @@ fun LessonItem(
     }
 }
 
+// Función que muestra un módulo
 @Composable
 fun ModuleCard(
-    module: Module,
+    module: Module, // Datos del módulo
     onClick: () -> Unit,
     cardColor: Color
 ) {
@@ -219,7 +228,7 @@ fun ModuleCard(
     ) {
         ListItem(
             headlineContent = {
-                Text(
+                Text( // Título del módulo
                     text = module.name,
                     style = MaterialTheme.typography.titleMedium
                 )
@@ -227,12 +236,13 @@ fun ModuleCard(
             colors = ListItemDefaults.colors(
                 containerColor = cardColor
             ),
-            supportingContent = {
+            supportingContent = { // Muestra el número de lecciones del módulo
                 Text(
-                    text = "${module.lessonCount} lecciones",
+                    text = stringResource(R.string.lecciones, module.lessonCount),
                     style = MaterialTheme.typography.bodyMedium
                 )
             },
+            // Muestra un icono de escuela en la parte izquierda
             leadingContent = {
                 Icon(
                     imageVector = Icons.Rounded.School,
