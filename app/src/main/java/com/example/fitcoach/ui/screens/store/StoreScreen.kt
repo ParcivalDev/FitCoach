@@ -36,22 +36,25 @@ import com.example.fitcoach.ui.theme.BackgroundLight
 import com.example.fitcoach.ui.theme.CardDark
 import com.example.fitcoach.ui.theme.CardLight
 
+// Pantalla de la tienda
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StoreScreen(
     navController: NavHostController,
     viewModel: StoreViewModel = viewModel()
 ) {
+    // Colores de fondo y de las cards según el tema
     val isDarkTheme = isSystemInDarkTheme()
     val backgroundColor = if (isDarkTheme) BackgroundDark else BackgroundLight
     val cardColor = if (isDarkTheme) CardDark else CardLight
 
+    // Obtiene los productos y el estado de carga del ViewModel
     val products by viewModel.products.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val context = LocalContext.current
 
     // Estado para el filtro
-    var filter by remember { mutableStateOf("Todos") }
+    var selectedFilter by remember { mutableStateOf<String?>(null) }
 
     val configuration = LocalConfiguration.current
     val isPortrait = configuration.orientation == Configuration.ORIENTATION_PORTRAIT
@@ -74,37 +77,67 @@ fun StoreScreen(
         bottomBar = { CommonBottomBar(navController, isDarkTheme, isPortrait = isPortrait) },
         containerColor = backgroundColor
     ) { padding ->
+        // Columna principal con los filtros y la lista de productos
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
         ) {
-            // Barra de filtro
+            // Row para los dos filtros
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 8.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Button(
-                    onClick = { filter = "Todos" },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = if (filter == "Todos") AccentOrange else cardColor
+                // Filtro "Todos"
+                FilterChip(
+                    selected = selectedFilter == null, // Seleccionado cuando no hay filtro
+                    onClick = { selectedFilter = null },
+                    label = { Text(stringResource(R.string.todos)) },
+                    modifier = Modifier.weight(1f), // Ocupa el mismo espacio que el otro filtro
+                    shape = RoundedCornerShape(16.dp),
+                    border = FilterChipDefaults.filterChipBorder(
+                        enabled = true,
+                        selected = selectedFilter == null,
+                        borderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
+                        selectedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0f)
+                    ),
+                    colors = FilterChipDefaults.filterChipColors(
+                        labelColor = if (isDarkTheme) Color.Gray else Color.DarkGray,
+                        selectedLabelColor = Color.White,
+                        selectedContainerColor = if (isDarkTheme) AccentOrange else AccentOrange.copy(
+                            alpha = 0.9f
+                        ),
+                        containerColor = Color.LightGray.copy(alpha = 0.2f)
                     )
-                ) {
-                    Text(text = "Todos")
-                }
+                )
 
-                Button(
-                    onClick = { filter = "Gratis" },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = if (filter == "Gratis") AccentOrange else cardColor
+                // Filtro "Gratis"
+                FilterChip(
+                    selected = selectedFilter == "Gratis",
+                    onClick = { selectedFilter = "Gratis" },
+                    label = { Text(stringResource(R.string.gratis)) },
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(16.dp),
+                    border = FilterChipDefaults.filterChipBorder(
+                        enabled = true,
+                        selected = selectedFilter == "Gratis",
+                        borderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
+                        selectedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0f)
+                    ),
+                    colors = FilterChipDefaults.filterChipColors(
+                        labelColor = if (isDarkTheme) Color.Gray else Color.DarkGray,
+                        selectedLabelColor = Color.White,
+                        selectedContainerColor = if (isDarkTheme) AccentOrange else AccentOrange.copy(
+                            alpha = 0.9f
+                        ),
+                        containerColor = Color.LightGray.copy(alpha = 0.2f)
                     )
-                ) {
-                    Text(text = "Gratis")
-                }
+                )
             }
 
+            // Muestra un indicador de carga mientras se obtienen los productos
             if (isLoading) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
@@ -113,24 +146,30 @@ fun StoreScreen(
                     CircularProgressIndicator()
                 }
             } else {
-                // Filtrar productos según el estado del filtro
-                val filteredProducts = when (filter) {
+                // Filtra los productos según el filtro seleccionado
+                val filteredProducts = when (selectedFilter) {
                     "Gratis" -> products.filter { it.isFree || it.price == 0.0 }
                     else -> products
                 }
 
+                // Muestra la lista de productos
                 LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(padding),
-                    contentPadding = PaddingValues(16.dp),
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(
+                        start = 16.dp,
+                        end = 16.dp,
+                        top = 8.dp,
+                        bottom = 16.dp
+                    ),
+                    // Espaciado entre los elementos de la lista
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-
+                    // Cada elemento de la lista es una card de producto
                     items(filteredProducts) { product ->
                         ProductCard(
                             product = product,
                             cardColor = cardColor,
+                            // Al hacer clic en la card, se abre el enlace del producto
                             onClick = {
                                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(product.url))
                                 context.startActivity(intent)
@@ -170,13 +209,13 @@ fun ProductCard(
                 Image(
                     painter = painterResource(
                         when (product.title) {
-                            "Guía de ejercicios Físico + [REGALO]" -> R.drawable.guia_ejercicio
-                            "E-Book Push The Limits" -> R.drawable.push_the_limits
-                            "E-book Push The Limits (Mujer)" -> R.drawable.push_mujer
-                            "E-book Building Deltoids" -> R.drawable.building_deltoids
-                            "CoronaEbook 2.0" -> R.drawable.coronaebook
-                            "Manual de Ejercicio LITE" -> R.drawable.manual_lite
-                            "Diario de Etto. PDF" -> R.drawable.diario_etto
+                            stringResource(R.string.guia_regalo) -> R.drawable.guia_ejercicio
+                            stringResource(R.string.ebook_push) -> R.drawable.push_the_limits
+                            stringResource(R.string.ebook_push_mujer) -> R.drawable.push_mujer
+                            stringResource(R.string.e_book_building_deltoids) -> R.drawable.building_deltoids
+                            stringResource(R.string.coronaebook_2_0) -> R.drawable.coronaebook
+                            stringResource(R.string.manual_de_ejercicio_lite) -> R.drawable.manual_lite
+                            stringResource(R.string.diario_de_etto_pdf) -> R.drawable.diario_etto
                             else -> R.drawable.ic_image_not_found // Imagen por defecto
                         }
                     ),
@@ -215,7 +254,7 @@ fun ProductCard(
                 // Surface para redondear los bordes del texto del precio y darle un color de fondo
                 Surface(
                     color = MaterialTheme.colorScheme.primary,
-                    shape = RoundedCornerShape(4.dp)
+                    shape = RoundedCornerShape(8.dp)
                 ) {
                     Text(
                         text = if (product.isFree || product.price == 0.0) {

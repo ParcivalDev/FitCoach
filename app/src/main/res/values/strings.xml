@@ -115,4 +115,11 @@
     <string name="msj_bienvenida_chat">¡Hola! Soy el asistente de FitCoach. Puedo ayudarte a conocer mejor la app y resolver tus dudas sobre cualquier sección. ¿Qué te gustaría saber?</string>
     <string name="tienda">Tienda</string>
     <string name="gratis">Gratis</string>
+    <string name="diario_de_etto_pdf">Diario de Etto. PDF</string>
+    <string name="manual_de_ejercicio_lite">Manual de Ejercicio LITE</string>
+    <string name="coronaebook_2_0">CoronaEbook 2.0</string>
+    <string name="e_book_building_deltoids">E-book Building Deltoids</string>
+    <string name="ebook_push_mujer">E-book Push The Limits (Mujer)</string>
+    <string name="ebook_push">E-Book Push The Limits</string>
+    <string name="guia_regalo">Guía de ejercicios Físico + [REGALO]</string>
 </resources>
