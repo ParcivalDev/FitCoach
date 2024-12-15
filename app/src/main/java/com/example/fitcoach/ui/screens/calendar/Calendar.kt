@@ -31,6 +31,8 @@ import com.example.fitcoach.R
 import com.example.fitcoach.ui.screens.home.components.CommonBottomBar
 import com.example.fitcoach.ui.theme.FitCoachTheme
 import java.time.YearMonth
+import java.time.format.TextStyle
+import java.util.Locale
 
 
 @Preview(showBackground = true, uiMode = UI_MODE_NIGHT_YES)
@@ -140,9 +142,14 @@ fun MonthSelector(viewModel: CalendarViewModel) {
             Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.mes_anterior))
         }
 
-        // Texto con el mes y año actual
+        // Texto con el mes y año actual usando getDisplayName para obtener el nombre en español
         Text(
-            text = "${viewModel.currentMonth.month} ${viewModel.currentMonth.year}",
+            text = "${
+                viewModel.currentMonth.month.getDisplayName(
+                    TextStyle.FULL,
+                    Locale("es") // Usar idioma español para el mes
+                ).replaceFirstChar { it.uppercase() } // Capitalizar la primera letra del mes
+            } ${viewModel.currentMonth.year}",
             style = MaterialTheme.typography.titleLarge
         )
 
@@ -305,8 +312,10 @@ fun NoteCard(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.weight(1f)
             ) {
-                Text(text = note.rating.emoji,
-                    style = MaterialTheme.typography.titleLarge)
+                Text(
+                    text = note.rating.emoji,
+                    style = MaterialTheme.typography.titleLarge
+                )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(text = note.note)
             }
