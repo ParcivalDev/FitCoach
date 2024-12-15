@@ -54,7 +54,7 @@ fun StoreScreen(
     val context = LocalContext.current
 
     // Estado para el filtro
-    var selectedFilter by remember { mutableStateOf<String?>(null) }
+    var filter by remember { mutableStateOf("Todos") }
 
     val configuration = LocalConfiguration.current
     val isPortrait = configuration.orientation == Configuration.ORIENTATION_PORTRAIT
@@ -92,14 +92,14 @@ fun StoreScreen(
             ) {
                 // Filtro "Todos"
                 FilterChip(
-                    selected = selectedFilter == null, // Seleccionado cuando no hay filtro
-                    onClick = { selectedFilter = null },
+                    selected = filter == "Todos", // Seleccionado cuando no hay filtro
+                    onClick = { filter = "Todos" }, // Al hacer clic, se selecciona el filtro
                     label = { Text(stringResource(R.string.todos)) },
                     modifier = Modifier.weight(1f), // Ocupa el mismo espacio que el otro filtro
                     shape = RoundedCornerShape(16.dp),
                     border = FilterChipDefaults.filterChipBorder(
                         enabled = true,
-                        selected = selectedFilter == null,
+                        selected = filter == "Todos",
                         borderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
                         selectedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0f)
                     ),
@@ -115,14 +115,14 @@ fun StoreScreen(
 
                 // Filtro "Gratis"
                 FilterChip(
-                    selected = selectedFilter == "Gratis",
-                    onClick = { selectedFilter = "Gratis" },
+                    selected = filter == "Gratis",
+                    onClick = { filter = "Gratis" },
                     label = { Text(stringResource(R.string.gratis)) },
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(16.dp),
                     border = FilterChipDefaults.filterChipBorder(
                         enabled = true,
-                        selected = selectedFilter == "Gratis",
+                        selected = filter == "Gratis",
                         borderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
                         selectedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0f)
                     ),
@@ -147,7 +147,7 @@ fun StoreScreen(
                 }
             } else {
                 // Filtra los productos según el filtro seleccionado
-                val filteredProducts = when (selectedFilter) {
+                val filteredProducts = when (filter) {
                     "Gratis" -> products.filter { it.isFree || it.price == 0.0 }
                     else -> products
                 }
