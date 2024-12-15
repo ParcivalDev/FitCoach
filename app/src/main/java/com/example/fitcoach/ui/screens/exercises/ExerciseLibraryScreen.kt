@@ -133,7 +133,7 @@ fun ExerciseLibraryScreen(
                     )
                 },
                 // BottomBar común a todas las pantallas
-                bottomBar = { CommonBottomBar(navController, isDarkTheme, isPortrait = true) },
+                bottomBar = { CommonBottomBar(navController, isDarkTheme, isPortrait = isPortrait) },
                 containerColor = backgroundColor
             ) { padding ->
                 Box(

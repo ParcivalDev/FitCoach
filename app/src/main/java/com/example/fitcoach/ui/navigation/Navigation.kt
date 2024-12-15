@@ -22,6 +22,7 @@ import com.example.fitcoach.ui.screens.timer.TimerScreen
 import com.example.fitcoach.ui.screens.login.LoginScreen
 import com.example.fitcoach.ui.screens.login.LoginViewModel
 import com.example.fitcoach.ui.screens.splash.SplashScreen
+import com.example.fitcoach.ui.screens.store.StoreScreen
 import com.example.fitcoach.ui.screens.timer.TimerViewModel
 import kotlinx.coroutines.delay
 // Función que define las rutas de navegación de la aplicación
@@ -126,6 +127,9 @@ fun Navigation() {
         }
         composable(Screen.Blog.route) {
             BlogScreen(navController = navController)
+        }
+        composable(Screen.Store.route) {
+            StoreScreen(navController = navController)
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.example.fitcoach.ui.screens.blog
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -17,6 +18,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -47,6 +49,9 @@ fun BlogScreen(
     val selectedCategory by viewModel.selectedCategory.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
 
+    val configuration = LocalConfiguration.current
+    val isPortrait = configuration.orientation == Configuration.ORIENTATION_PORTRAIT
+
     Scaffold( // Barra superior y barra inferior
         topBar = {
             TopAppBar(
@@ -62,7 +67,7 @@ fun BlogScreen(
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = cardColor)
             )
         },
-        bottomBar = { CommonBottomBar(navController, isDarkTheme, isPortrait = true) },
+        bottomBar = { CommonBottomBar(navController, isDarkTheme, isPortrait = isPortrait) },
         containerColor = backgroundColor
     ) { padding ->
         Column( // Columna con las categorías y los artículos

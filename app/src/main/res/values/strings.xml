@@ -87,7 +87,7 @@
     <string name="icon_abrir_menu">Abrir menú</string>
     <string name="error_al_cargar_los_ejercicios">Error al cargar los ejercicios: %1$s</string>
     <string name="sin_ejercicios">No hay ejercicios disponibles para este grupo muscular</string>
-    <string name="buscar_ejercicio">Buscar ejercicio...</string>
+    <string name="buscar_ejercicio">Buscar ejercicio…</string>
     <string name="icon_buscar">Buscar</string>
     <string name="icon_play_ejercicio">Ver ejercicio</string>
     <string name="blog">Blog</string>
@@ -107,9 +107,12 @@
     <string name="como_funciona_el_temporizador">¿Cómo funciona el temporizador?</string>
     <string name="que_es_la_academia">¿Qué es la Academia?</string>
     <string name="como_usar_calendario">¿Para que es el calendario?</string>
+    <string name="comprar_tienda">¿Que puedo comprar en la tienda?</string>
     <string name="que_hay_en_el_blog">¿Qué puedo encontrar en el blog?</string>
     <string name="necesito_ayuda">Necesito ayuda</string>
     <string name="escribe_un_mensaje">Escribe un mensaje…</string>
     <string name="icon_enviar">Enviar</string>
     <string name="msj_bienvenida_chat">¡Hola! Soy el asistente de FitCoach. Puedo ayudarte a conocer mejor la app y resolver tus dudas sobre cualquier sección. ¿Qué te gustaría saber?</string>
+    <string name="tienda">Tienda</string>
+    <string name="gratis">Gratis</string>
 </resources>

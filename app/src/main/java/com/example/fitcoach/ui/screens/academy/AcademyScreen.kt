@@ -101,7 +101,7 @@ fun AcademyScreen(
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = cardColor)
             )
         },
-        bottomBar = { CommonBottomBar(navController, isDarkTheme, isPortrait = true) },
+        bottomBar = { CommonBottomBar(navController, isDarkTheme, isPortrait = isPortrait) },
         containerColor = backgroundColor
     ) { padding ->
         // Contenido de la pantalla

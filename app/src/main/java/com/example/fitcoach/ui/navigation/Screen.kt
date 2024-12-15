@@ -10,7 +10,7 @@ sealed class Screen(val route: String) {
     object Calendar : Screen("calendar")
     object Blog : Screen("blog")
     object Academy : Screen("academy")
-
+    object Store : Screen("store")
     object ExerciseLibrary : Screen("exercises?muscleGroup={muscleGroup}") {
         fun createRoute(muscleGroup: String? = null) =
             "exercises" + (muscleGroup?.let { "?muscleGroup=$it" } ?: "")

@@ -52,6 +52,7 @@ fun ChatDialog(
         stringResource(R.string.que_ejercicios_hay),
         stringResource(R.string.que_es_la_academia),
         stringResource(R.string.como_usar_calendario),
+        stringResource(R.string.comprar_tienda),
         stringResource(R.string.que_hay_en_el_blog),
         stringResource(R.string.como_funciona_el_temporizador),
         )

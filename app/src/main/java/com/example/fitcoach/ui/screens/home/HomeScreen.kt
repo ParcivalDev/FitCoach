@@ -179,6 +179,8 @@ fun HomeScreen(navController: NavHostController, vm: HomeViewModel = viewModel()
                         onCategoryClick = { category ->
                             if (category.name == "Academia") {
                                 navController.navigate(Screen.Academy.route)
+                            } else if (category.name == "Tienda") {
+                                navController.navigate(Screen.Store.route)
                             } else {
                                 vm.showDevelopmentDialog()
                             }
