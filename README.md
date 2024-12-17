@@ -4,7 +4,7 @@
 
 FitCoach es una aplicación móvil Android diseñada para facilitar la gestión y seguimiento del entrenamiento personal. Desarrollada específicamente para el entrenador Sergio Martinez y sus clientes, la aplicación proporciona una interfaz intuitiva y funcionalidades específicas para el entrenamiento personal.
 
-Puedes acceder a la presentación pulsando [aquí](acortar.link/yDJ7Be).
+Puedes acceder a la presentación pulsando [aquí](acortar.link/yDJ7Be)
 
 ## Características Implementadas
 
